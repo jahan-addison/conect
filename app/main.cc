@@ -121,14 +121,14 @@ public:
         gui->add_variable("Difficulty", this->default_difficulty, enabled)
             ->set_items({ "Beginner", "Hard", "Insane" });
 
-        this->load_image();
+        this->load_game_board();
 
         this->perform_layout();
         this->set_visible(true);
     }
 
 public:
-    void load_image() {
+    void load_game_board() {
 #if defined(_WIN32)
         /// Executable is in the Debug/Release/.. subdirectory
         std::string resources_folder_path("./resources");
@@ -199,8 +199,6 @@ private:
 
 
 int main(int argc, char** argv) {
-
-
     try {
         nanogui::init();
 
