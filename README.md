@@ -2,6 +2,8 @@
 
 > Connect-four, five, and fun variations with AI and network multiplayer support 🎲
 
+![img](./resources/screenshot.png)
+
 You can monitor the progress on [the project kanban boards](https://github.com/jahan-addison/fjorir/projects).
 
 
