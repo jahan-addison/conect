@@ -25,9 +25,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(ConfigSafeGuards)
 include(Colors)
 include(CTest)
-include(nanogui)
-# include(Doctest)
-include(Documentation)
 include(LTO)
 include(Misc)
 include(Warnings)
@@ -52,7 +49,6 @@ set(LIBRARY_NAME fjorir)  # Default name for the library built from src/*.cc (ch
 # Compile all sources into a library.
 
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
-add_compile_options(${NANOGUI_NATIVE_FLAGS})
 
 
 # Lib needs its header files, and users of the library must also see these (PUBLIC). (No change needed)

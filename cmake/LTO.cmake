@@ -1,32 +1,3 @@
-# Usage :
-#
-# Variable : ENABLE_LTO | Enable or disable LTO support for this build
-#
-# find_lto(lang)
-# - lang is C or CXX (the language to test LTO for)
-# - call it after project() so that the compiler is already detected
-#
-# This will check for LTO support and create a target_enable_lto(target [debug,optimized,general]) macro.
-# The 2nd parameter has the same meaning as in target_link_libraries, and is used to enable LTO only for those build configurations
-# 'debug' is by default the Debug configuration, and 'optimized' all the other configurations
-#
-# if ENABLE_LTO is set to false, an empty macro will be generated
-#
-# Then to enable LTO for your target use
-#
-#       target_enable_lto(mytarget general)
-#
-# It is however recommended to use it only for non debug builds the following way :
-#
-#       target_enable_lto(mytarget optimized)
-#
-# Note : For CMake versions < 3.9, target_link_library is used in it's non plain version.
-#        You will need to specify PUBLIC/PRIVATE/INTERFACE to all your other target_link_library calls for the target
-#
-# WARNING for cmake versions older than 3.9 :
-# This module will override CMAKE_AR CMAKE_RANLIB and CMAKE_NM by the gcc versions if found when building with gcc
-
-
 # License:
 #
 # Copyright (C) 2016 Lectem <lectem@gmail.com>
