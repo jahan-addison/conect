@@ -30,20 +30,13 @@ namespace fjorir {
     class Engine : public Screen
     {
     public:
-        Engine(bool init = true) : Screen(Vector2i(1150, 800), "fjorir [GL 4.1]",
-            true, false,
-            true, true,
-            false, 4, 1) {
-            if (init)
-                this->init();
-        }
+        explicit Engine(bool init = true);
+        Engine(Engine& Engine) = delete;
 
-    public:
-        void init();
+    private:
         void set_board_actions();
         void set_sidebar();
         void set_game_board();
-    private:
         using ImageHolder = std::unique_ptr<uint8_t[], void(*)(void*)>;
         std::vector<std::pair<ref<Texture>, ImageHolder>> m_images;
         difficulty default_difficulty = difficulty::Beginner;

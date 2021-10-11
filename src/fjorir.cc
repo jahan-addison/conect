@@ -1,7 +1,10 @@
 #include <fjorir.h>
 
 namespace fjorir {
-    void Engine::init() {
+    Engine::Engine(bool init) : Screen(Vector2i(1150, 800), "fjorir [GL 4.1]",
+        true, false,
+        true, true,
+        false, 4, 1) {
         this->set_sidebar();
         this->set_game_board();
         this->set_board_actions();
@@ -18,7 +21,7 @@ namespace fjorir {
         window->set_position(Vector2i(250, 50));
         for (auto i = 1; i <= 7; i++) {
             Button* b = window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
-            b->set_background_color(Color(255, 255, 255, 25));
+            b->set_background_color(Color(255, 255, 255, 35));
             b->set_callback([] { std::cout << "pushed!" << std::endl; });
         }
     }
@@ -66,7 +69,7 @@ namespace fjorir {
 
 
         ImageHolder texture_data(
-            stbi_load((images[0].second + ".png").c_str(), &size.x(), &size.y(), &n, 0),
+            stbi_load((images[1].second + ".png").c_str(), &size.x(), &size.y(), &n, 0),
             stbi_image_free);
         assert(n == 4);
 
@@ -86,7 +89,6 @@ namespace fjorir {
             image_view->set_image(m_images[0].first);
         image_view->set_size(Vector2i(820, 520));
         image_view->center();
-
 
         image_view->set_pixel_callback(
             [this](const Vector2i& index, char** out, size_t size) {
