@@ -39,29 +39,28 @@ find_lto(CXX)
 #                         Locate files (change as needed).
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cc files in src/
-    src/example.cc
+    src/fjorir.cc
 )
 set(TESTFILES        # All .cc files in tests/
     tests/main.cc
 )
-set(LIBRARY_NAME engine)  # Default name for the library built from src/*.cc (change if you wish)
+set(LIBRARY_NAME fjorir)  # Default name for the library built from src/*.cc (change if you wish)
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
 # --------------------------------------------------------------------------------
 # Compile all sources into a library.
+
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
-
-
 add_compile_options(${NANOGUI_NATIVE_FLAGS})
 
 
 # Lib needs its header files, and users of the library must also see these (PUBLIC). (No change needed)
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
+# NANOGUI
 add_subdirectory(external/nanogui)
 set_property(TARGET glfw glfw_objects nanogui PROPERTY FOLDER "dependencies")
-
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/external/nanogui/include)
 target_link_libraries(${LIBRARY_NAME} PUBLIC nanogui)
 
