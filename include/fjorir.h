@@ -5,7 +5,7 @@
 #include <nanogui/imageview.h>
 #include <nanogui/tabwidget.h>
 #include <nanogui/texture.h>
-#include <nanogui/nanogui.h>
+#include <nanogui/nanogui.h> 
 #include <iostream>
 #include <memory>
 
@@ -19,33 +19,33 @@
 #include <gltexture.h>
 
 namespace fjorir {
-	using namespace nanogui;
+    using namespace nanogui;
 
-	enum class difficulty {
-		Beginner = 0,
-		Hard,
-		Insane
-	};
+    enum class difficulty {
+        Beginner = 0,
+        Hard,
+        Insane
+    };
 
-	class Engine : public Screen
-	{
-	public:
-		Engine(bool init = true) : Screen(Vector2i(1150, 800), "fjorir [GL 4.1]",
-			true, false,
-			true, true,
-			false, 4, 1) {
-			if (init)
-				this->init();
-		}
+    class Engine : public Screen
+    {
+    public:
+        Engine(bool init = true) : Screen(Vector2i(1150, 800), "fjorir [GL 4.1]",
+            true, false,
+            true, true,
+            false, 4, 1) {
+            if (init)
+                this->init();
+        }
 
-	public:
-		void init();
-		void set_board_actions();
-		void set_sidebar();
-		void set_game_board();
-	private:
-		using ImageHolder = std::unique_ptr<uint8_t[], void(*)(void*)>;
-		std::vector<std::pair<ref<Texture>, ImageHolder>> m_images;
-		difficulty default_difficulty = difficulty::Beginner;
-	};
+    public:
+        void init();
+        void set_board_actions();
+        void set_sidebar();
+        void set_game_board();
+    private:
+        using ImageHolder = std::unique_ptr<uint8_t[], void(*)(void*)>;
+        std::vector<std::pair<ref<Texture>, ImageHolder>> m_images;
+        difficulty default_difficulty = difficulty::Beginner;
+    };
 } // namespace fjorir
