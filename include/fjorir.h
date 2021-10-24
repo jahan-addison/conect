@@ -6,6 +6,7 @@
 #include <nanogui/tabwidget.h>
 #include <nanogui/texture.h>
 #include <nanogui/nanogui.h> 
+#include <canvas.h>
 #include <iostream>
 #include <memory>
 
@@ -34,6 +35,7 @@ namespace fjorir {
         Engine(Engine& Engine) = delete;
 
     private:
+        Game_Board* canvas;
         void set_board_actions();
         void set_sidebar();
         void set_game_board();
