@@ -1,19 +1,19 @@
-#include <canvas.h>
+#include <game_board.h>
 
 namespace fjorir {
 
     Game_Board::Game_Board(Widget* parent) : Canvas(parent, 1), m_rotation(0.f) {
         using namespace nanogui;
+        this->
+            m_shader = new Shader(
+                render_pass(),
 
-        m_shader = new Shader(
-            render_pass(),
-
-            // An identifying name
-            "test shader",
+                // An identifying name
+                "test shader",
 
 #if defined(NANOGUI_USE_OPENGL)
-            // Vertex shader
-            R"(#version 330
+                // Vertex shader
+                R"(#version 330
             uniform mat4 mvp;
             in vec3 position;
             in vec3 color;
@@ -23,16 +23,16 @@ namespace fjorir {
                 gl_Position = mvp * vec4(position, 1.0);
             })",
 
-            // Fragment shader
-            R"(#version 330
+                // Fragment shader
+                R"(#version 330
             out vec4 color;
             in vec4 frag_color;
             void main() {
                 color = frag_color;
             })"
 #elif defined(NANOGUI_USE_GLES)
-            // Vertex shader
-            R"(precision highp float;
+                // Vertex shader
+                R"(precision highp float;
             uniform mat4 mvp;
             attribute vec3 position;
             attribute vec3 color;
@@ -42,15 +42,15 @@ namespace fjorir {
                 gl_Position = mvp * vec4(position, 1.0);
             })",
 
-            // Fragment shader
-            R"(precision highp float;
+                // Fragment shader
+                R"(precision highp float;
             varying vec4 frag_color;
             void main() {
                 gl_FragColor = frag_color;
             })"
 #elif defined(NANOGUI_USE_METAL)
-            // Vertex shader
-            R"(using namespace metal;
+                // Vertex shader
+                R"(using namespace metal;
 
             struct VertexOut {
                 float4 position [[position]];
@@ -67,8 +67,8 @@ namespace fjorir {
                 return vert;
             })",
 
-            /* Fragment shader */
-            R"(using namespace metal;
+                /* Fragment shader */
+                R"(using namespace metal;
 
             struct VertexOut {
                 float4 position [[position]];
@@ -79,7 +79,7 @@ namespace fjorir {
                 return vert.color;
             })"
 #endif
-        );
+            );
 
         uint32_t indices[3 * 12] = {
             3, 2, 6, 6, 7, 3,

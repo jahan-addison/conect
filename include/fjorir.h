@@ -6,9 +6,11 @@
 #include <nanogui/tabwidget.h>
 #include <nanogui/texture.h>
 #include <nanogui/nanogui.h> 
-#include <canvas.h>
 #include <iostream>
 #include <memory>
+
+#include <game_board.h>
+
 
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION

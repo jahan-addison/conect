@@ -37,7 +37,7 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cc files in src/
     src/fjorir.cc
-    src/canvas.cc
+    src/game_board.cc
 )
 set(TESTFILES        # All .cc files in tests/
     tests/main.cc
