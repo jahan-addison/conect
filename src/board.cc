@@ -1,9 +1,12 @@
 
-#include <game_board.h>
+#include <board.h>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace fjorir {
 
-    Game_Board::Game_Board(Widget* parent) : Canvas(parent, 1), m_rotation(0.f) {
+    Board::Board(Widget* parent) : Canvas(parent, 1), m_image(-1), m_rotation(0.f) {
         using namespace nanogui;
         this->
             m_shader = new Shader(
@@ -109,11 +112,14 @@ namespace fjorir {
         m_shader->set_buffer("color", VariableType::Float32, { 8, 3 }, colors);
     }
 
-    void Game_Board::set_rotation(float rotation) {
+    Board::~Board() {
+    }
+
+    void Board::set_rotation(float rotation) {
         m_rotation = rotation;
     }
 
-    void Game_Board::draw_contents() {
+    void Board::draw_contents() {
 
         Matrix4f view = Matrix4f::look_at(
             Vector3f(0, -2, -10),
@@ -148,7 +154,7 @@ namespace fjorir {
         m_shader->end();
     }
 
-    void Game_Board::draw(NVGcontext* ctx) {
+    void Board::draw(NVGcontext* ctx) {
 
         nanogui::Screen* scr = screen();
         if (scr == nullptr)
@@ -189,7 +195,41 @@ namespace fjorir {
         }
 
         m_render_pass->begin();
-        draw_contents();
+        // https://github.com/memononen/nanovg/blob/master/src/nanovg.h
+        if (!std::filesystem::exists(fs::path("../../../resources/fjorir-board-2.png")))
+            throw std::runtime_error("could not find game board image");
+        if (m_image == -1)
+            m_image = nvgCreateImage(ctx, "../../../resources/fjorir-board-2.png", 0);
+        if (m_image == 0)
+            throw std::runtime_error("could not load game board");
+
+        NVGpaint img_pattern = nvgImagePattern(ctx, m_pos.x(), 0, m_size.x(), m_size.y(), 0.f, m_image, 1.f);
+
+        nvgFillPaint(ctx, img_pattern);
+
+        nvgBeginPath(ctx);
+        nvgRect(ctx, m_pos.x(), m_pos.y(), m_size.x(), m_size.y());
+        nvgFill(ctx);
+
+        //if (!std::filesystem::exists(fs::path("../../../resources/circle-red.png")))
+        //    throw std::runtime_error("could not find coin image");
+
+        //m_coins.emplace_back(nvgCreateImage(ctx, "../../../resources/circle-red.png", 0));
+
+        //img_pattern = nvgImagePattern(ctx, m_pos.x() + 55.f, m_pos.y() + m_size.y() - 72.f - 35.f, 72.f, 72.f, 0.f, m_coins[0], 1.f);
+
+        //nvgFillPaint(ctx, img_pattern);
+
+        //nvgRect(ctx, m_pos.x() + 55.f, m_pos.y() + m_size.y() - 72.f - 35.f, 72.f, 72.f);
+        //nvgFill(ctx);
+
+        //nvgClosePath(ctx);
+
+
+        //if (m_coins.back() == 0)
+        //    throw std::runtime_error("could not load game board");
+
+        //draw_contents();
         m_render_pass->end();
 
         if (m_draw_border) {

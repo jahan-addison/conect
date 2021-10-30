@@ -29,14 +29,18 @@ namespace fjorir {
 
     constexpr float Pi = 3.14159f;
 
-    class Game_Board : public Canvas {
+    class Board : public Canvas {
     public:
-        Game_Board(Widget* parent);
+        Board(Widget* parent);
+        virtual ~Board();
         void set_rotation(float rotation);
         virtual void draw_contents() override;
         virtual void draw(NVGcontext* ctx) override;
     private:
         ref<Shader> m_shader;
+        int m_image;
+        std::vector<int> m_coins;
         float m_rotation;
     };
+
 } // namespace fjorir

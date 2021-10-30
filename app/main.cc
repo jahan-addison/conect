@@ -1,13 +1,13 @@
 #include <nanogui/nanogui.h>
 #include <iostream>
-#include <fjorir.h>
+#include <interface.h>
 
 int main(int argc, char** argv) {
     try {
         nanogui::init();
 
         /* scoped variables */ {
-            nanogui::ref<fjorir::Engine> app = new fjorir::Engine();
+            nanogui::ref<fjorir::Interface> app = new fjorir::Interface();
             app->dec_ref();
             app->draw_all();
             app->set_visible(true);

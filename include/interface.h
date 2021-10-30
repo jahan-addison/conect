@@ -9,7 +9,7 @@
 #include <iostream>
 #include <memory>
 
-#include <game_board.h>
+#include <Board.h>
 
 
 #define STB_IMAGE_STATIC
@@ -30,17 +30,17 @@ namespace fjorir {
         Insane
     };
 
-    class Engine : public Screen
+    class Interface : public Screen
     {
     public:
-        explicit Engine(bool init = true);
-        Engine(Engine& Engine) = delete;
+        explicit Interface(bool init = true);
+        Interface(Interface& Engine) = delete;
 
     private:
-        Game_Board* canvas;
+        Board* canvas;
         void set_board_actions();
         void set_sidebar();
-        void set_game_board();
+        void set_board();
         using ImageHolder = std::unique_ptr<uint8_t[], void(*)(void*)>;
         std::vector<std::pair<ref<Texture>, ImageHolder>> m_images;
         difficulty default_difficulty = difficulty::Beginner;
