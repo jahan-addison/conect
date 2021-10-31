@@ -1,15 +1,12 @@
 #pragma once
 
 #include <nanogui/opengl.h>
-#include <nanogui/imagepanel.h>
-#include <nanogui/imageview.h>
 #include <nanogui/tabwidget.h>
 #include <nanogui/texture.h>
 #include <nanogui/nanogui.h> 
 #include <iostream>
-#include <memory>
 
-#include <Board.h>
+#include <board.h>
 
 
 #define STB_IMAGE_STATIC
@@ -19,7 +16,6 @@
 #elif defined(__GNUC__)
 #   pragma GCC diagnostic ignored "-Wunused-function"
 #endif
-#include <gltexture.h>
 
 namespace fjorir {
     using namespace nanogui;
@@ -41,8 +37,6 @@ namespace fjorir {
         void set_board_actions();
         void set_sidebar();
         void set_board();
-        using ImageHolder = std::unique_ptr<uint8_t[], void(*)(void*)>;
-        std::vector<std::pair<ref<Texture>, ImageHolder>> m_images;
         difficulty default_difficulty = difficulty::Beginner;
     };
 } // namespace fjorir

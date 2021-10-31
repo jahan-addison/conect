@@ -6,7 +6,7 @@
 #include <nanogui/opengl.h>
 #include <nanogui/renderpass.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
+#include <array>
 
 #if defined(_WIN32)
 #  if defined(APIENTRY)
@@ -31,15 +31,18 @@ namespace fjorir {
 
     class Board : public Canvas {
     public:
+
         Board(Widget* parent);
         virtual ~Board();
         void set_rotation(float rotation);
         virtual void draw_contents() override;
         virtual void draw(NVGcontext* ctx) override;
     private:
+        using Image = int;
+        using Column = std::array < Image, 7>;
         ref<Shader> m_shader;
         int m_image;
-        std::vector<int> m_coins;
+        std::array<Column, 6> m_layout{};
         float m_rotation;
     };
 
