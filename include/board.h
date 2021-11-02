@@ -6,6 +6,7 @@
 #include <nanogui/opengl.h>
 #include <nanogui/renderpass.h>
 #include <GLFW/glfw3.h>
+#include <engine.h>
 #include <array>
 
 #if defined(_WIN32)
@@ -32,11 +33,13 @@ namespace fjorir {
     class Board : public Canvas {
     public:
 
-        Board(Widget* parent);
+        Board(Widget* parent, Engine* engine);
         virtual ~Board();
         void set_rotation(float rotation);
         virtual void draw_contents() override;
         virtual void draw(NVGcontext* ctx) override;
+    public:
+        Engine* engine;
     private:
         using Image = int;
         using Column = std::array < Image, 7>;

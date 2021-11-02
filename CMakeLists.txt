@@ -32,7 +32,7 @@ include(Warnings)
 #                         Locate files (change as needed).
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cc files in src/
-    src/interface.cc
+    src/gui.cc
     src/board.cc
 )
 set(TESTFILES        # All .cc files in tests/

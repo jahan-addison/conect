@@ -1,5 +1,6 @@
 
 #include <board.h>
+#include <iostream>
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -7,7 +8,7 @@ namespace fs = std::filesystem;
 
 namespace fjorir {
 
-    Board::Board(Widget* parent) : Canvas(parent, 1), m_image(-1), m_rotation(0.f) {
+    Board::Board(Widget* parent, Engine* engine) : Canvas(parent, 1), engine(engine), m_image(-1), m_rotation(0.f) {
         using namespace nanogui;
         this->
             m_shader = new Shader(
@@ -197,10 +198,10 @@ namespace fjorir {
 
         m_render_pass->begin();
         // https://github.com/memononen/nanovg/blob/master/src/nanovg.h
-        if (!std::filesystem::exists(fs::path("../../../resources/fjorir-board-filled.png")))
+        if (!std::filesystem::exists(fs::path("../../../resources/fjorir-board-2.png")))
             throw std::runtime_error("could not find game board image");
         if (m_image == -1)
-            m_image = nvgCreateImage(ctx, "../../../resources/fjorir-board-filled.png", 0);
+            m_image = nvgCreateImage(ctx, "../../../resources/fjorir-board-2.png", 0);
         if (m_image == 0)
             throw std::runtime_error("could not load game board");
 
@@ -211,6 +212,10 @@ namespace fjorir {
         nvgBeginPath(ctx);
         nvgRect(ctx, m_pos.x(), m_pos.y(), m_size.x(), m_size.y());
         nvgFill(ctx);
+
+        if (this->engine->get_is_open()) {
+            std::cout << "last coin: " << this->engine->column_to_name(this->engine->pop_coin());
+        }
 
         //if (!std::filesystem::exists(fs::path("../../../resources/circle-red.png")))
         //    throw std::runtime_error("could not find coin image");
@@ -250,7 +255,7 @@ namespace fjorir {
                 rp = m_render_pass_resolved;
 #endif
             rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
-        }
     }
+}
 
 } // namespace fjorir

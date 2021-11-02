@@ -1,8 +1,8 @@
-#include <interface.h>
+#include <gui.h>
 
 namespace fjorir {
 
-    Interface::Interface(bool init) : Screen(Vector2i(1150, 800), "fjorir [GL 4.1]",
+    GUI::GUI(bool init) : Screen(Vector2i(1150, 800), "fjorir [GL 4.1]",
         true, false,
         true, true,
         false, 4, 1) {
@@ -13,7 +13,7 @@ namespace fjorir {
         this->set_visible(true);
     }
 
-    void Interface::set_board_actions() {
+    void GUI::set_board_actions() {
         this->inc_ref();
         FormHelper* gui = new FormHelper(this);
         ref<Window> window = gui->add_window(Vector2i(0, 150), "Game Board");
@@ -23,10 +23,14 @@ namespace fjorir {
         for (auto i = 1; i <= 7; i++) {
             Button* b = window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
             b->set_background_color(Color(255, 255, 255, 35));
-            b->set_callback([] { std::cout << "pushed!" << std::endl; });
+            b->set_callback([&, this, i] {
+                this->engine.add_coin(static_cast<Engine::COLUMN>(i - 1));
+                std::cout << "pushed: " << i << std::endl; }
+            );
         }
     }
-    void Interface::set_sidebar() {
+
+    void GUI::set_sidebar() {
         this->inc_ref();
         FormHelper* gui = new FormHelper(this);
         ref<Window> window = gui->add_window(Vector2i(50, 50), "Let's Play!");
@@ -42,14 +46,15 @@ namespace fjorir {
             ->set_items({ "Beginner", "Hard", "Insane" });
     }
 
-    void Interface::set_board() {
+    void GUI::set_board() {
         this->inc_ref();
         ref<Window> window = new Window(this, " ");
         window->set_fixed_size(Vector2i(820, 560));
         window->set_position(Vector2i(/*820, 520*/ 250, 120));
-        canvas = new Board(window);
+        canvas = new Board(window, &engine);
         canvas->set_background_color({ 100, 100, 100, 255 });
         canvas->set_fixed_size({ 820, 520 });
+
         perform_layout();
     }
 
