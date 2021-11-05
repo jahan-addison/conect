@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <engine.h>
 #include <nanogui/canvas.h>
 #include <nanogui/opengl.h>
