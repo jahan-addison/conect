@@ -6,14 +6,9 @@
 
 namespace fs = std::filesystem;
 
-
 namespace fjorir {
 
-    constexpr void Board::set_rotation(float rotation) {
-        m_rotation = rotation;
-    }
-
-    std::pair<float, float> Board::get_coin_drawing_pos(int x_pos, int y_pos) const {
+    inline std::pair<float, float> Board::get_coin_drawing_pos(int x_pos, int y_pos) const noexcept {
         float xx = m_pos.x() + 55.f + (106.2211f * x_pos);
         float yy = m_pos.y() + m_size.y() - 107.2222f - (75.6222f * y_pos);
 
@@ -38,7 +33,7 @@ namespace fjorir {
         return false;
     }
 
-    void Board::draw_coins(NVGcontext* ctx) {
+    void Board::draw_coins(NVGcontext* ctx) const {
         auto x_pos = 0, y_pos = 0;
         for (auto const& column : m_layout) {
             y_pos = 0;

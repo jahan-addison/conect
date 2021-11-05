@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nanogui/canvas.h>
-#include <nanogui/shader.h>
 #include <nanogui/screen.h>
 #include <nanogui/opengl.h>
 #include <nanogui/renderpass.h>
@@ -19,12 +18,8 @@
 
 namespace fjorir {
 
-    using nanogui::Vector3f;
-    using nanogui::Vector2i;
-    using nanogui::Matrix4f;
     using nanogui::Vector2f;
     using nanogui::Vector2i;
-    using nanogui::Shader;
     using nanogui::Canvas;
     using nanogui::ref;
 
@@ -34,24 +29,21 @@ namespace fjorir {
     class Board : public Canvas {
     public:
 
-        Board(Widget* parent, Engine* engine) : Canvas(parent, 1), engine(engine), m_image(-1), m_rotation(0.f)
+        Board(Widget* parent, Engine* engine) : Canvas(parent, 1), engine(engine), m_image(-1)
         { }
         virtual ~Board()
         { }
-        constexpr void set_rotation(float rotation);
         virtual void draw(NVGcontext* ctx) override;
     public:
         Engine* engine;
     private:
-        std::pair<float, float> get_coin_drawing_pos(int x_pos, int y_pos) const;
+        inline std::pair<float, float> get_coin_drawing_pos(int x_pos, int y_pos) const noexcept;
         bool add_coin(NVGcontext* ctx, Engine::Column col);
-        void draw_coins(NVGcontext* ctx);
+        void draw_coins(NVGcontext* ctx) const;
     private:
         using Image = int;
-        ref<Shader> m_shader;
-        int m_image;
+        Image m_image;
         std::array<std::array < Image, 6>, 7> m_layout{};
-        float m_rotation;
     };
 
 } // namespace fjorir
