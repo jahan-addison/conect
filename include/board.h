@@ -49,7 +49,7 @@ namespace fjorir {
         using Image = int;
         ref<Shader> m_shader;
         int m_image;
-        std::array<std::array < Image, 7>, 6> m_layout{};
+        std::array<std::array < Image, 6>, 7> m_layout{};
         float m_rotation;
     };
 

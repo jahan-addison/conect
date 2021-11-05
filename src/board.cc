@@ -159,7 +159,7 @@ namespace fjorir {
 
     std::pair<float, float> Board::get_coin_drawing_pos(int x_pos, int y_pos) const {
         float xx = m_pos.x() + 55.f + (106.2211f * x_pos);
-        float yy = m_pos.y() + m_size.y() - 107.2222f - (55.f * y_pos);
+        float yy = m_pos.y() + m_size.y() - 107.2222f - (75.6222f * y_pos);
 
         return { xx, yy };
     }
@@ -183,6 +183,7 @@ namespace fjorir {
     void Board::draw_coins(NVGcontext* ctx) {
         int x_pos = 0, y_pos = 0;
         for (auto const& column : m_layout) {
+            y_pos = 0;
             for (auto const& texture : column) {
                 if (texture != 0) {
                     auto col_position = get_coin_drawing_pos(x_pos, y_pos);
@@ -193,6 +194,7 @@ namespace fjorir {
                     nvgRect(ctx, col_position.first, col_position.second, 72.f, 72.f);
                     nvgFill(ctx);
                 }
+                y_pos++;
             }
             x_pos++;
         }
