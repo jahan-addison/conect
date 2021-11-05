@@ -34,10 +34,11 @@ namespace fjorir {
     class Board : public Canvas {
     public:
 
-        Board(Widget* parent, Engine* engine);
-        virtual ~Board();
+        Board(Widget* parent, Engine* engine) : Canvas(parent, 1), engine(engine), m_image(-1), m_rotation(0.f)
+        { }
+        virtual ~Board()
+        { }
         constexpr void set_rotation(float rotation);
-        virtual void draw_contents() override;
         virtual void draw(NVGcontext* ctx) override;
     public:
         Engine* engine;

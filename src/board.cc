@@ -9,17 +9,8 @@ namespace fs = std::filesystem;
 
 namespace fjorir {
 
-    Board::Board(Widget* parent, Engine* engine) : Canvas(parent, 1), engine(engine), m_image(-1), m_rotation(0.f) {
-    }
-
-    Board::~Board() {
-    }
-
     constexpr void Board::set_rotation(float rotation) {
         m_rotation = rotation;
-    }
-
-    void Board::draw_contents() {
     }
 
     std::pair<float, float> Board::get_coin_drawing_pos(int x_pos, int y_pos) const {
@@ -38,15 +29,17 @@ namespace fjorir {
                 throw std::runtime_error("could not find coin image");
 
             (*location)[test - location->begin()] = nvgCreateImage(ctx, "../../../resources/circle-red.png", 0);
+
             if ((*location)[test - location->begin()] == 0)
                 throw std::runtime_error("could not load coin texture");
+
             return true;
         }
         return false;
     }
 
     void Board::draw_coins(NVGcontext* ctx) {
-        int x_pos = 0, y_pos = 0;
+        auto x_pos = 0, y_pos = 0;
         for (auto const& column : m_layout) {
             y_pos = 0;
             for (auto const& texture : column) {
@@ -152,6 +145,6 @@ namespace fjorir {
 #endif
             rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
         }
-        }
+    }
 
-    } // namespace fjorir
+} // namespace fjorir
