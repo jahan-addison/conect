@@ -24,7 +24,7 @@ namespace fjorir {
             Button* b = window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
             b->set_background_color(Color(255, 255, 255, 35));
             b->set_callback([&, this, i] {
-                this->engine.add_coin(static_cast<Engine::COLUMN>(i - 1));
+                this->engine.add_coin(static_cast<Engine::Column>(i));
                 std::cout << "pushed: " << i << std::endl; }
             );
         }
@@ -34,13 +34,15 @@ namespace fjorir {
         this->inc_ref();
         FormHelper* gui = new FormHelper(this);
         ref<Window> window = gui->add_window(Vector2i(50, 50), "Let's Play!");
+        std::string player_1 = "Anonymous";
+        std::string player_2 = "AI";
         gui->add_group("Options");
         gui->add_button("Reset", []() { std::cout << "Game reset!" << std::endl; });
         gui->add_button("Invite...", []() { std::cout << "Invite your friend!" << std::endl; });
         gui->add_group("Who's Playing");
 
-        gui->add_variable("Player 1", std::string("Anonymous"))->set_placeholder("(type your name here)");
-        gui->add_variable("Player 2", std::string("AI"));
+        gui->add_variable("Player 1", player_1)->set_placeholder("(type your name here)");
+        gui->add_variable("Player 2", player_2);
 
         gui->add_variable("Difficulty", this->default_difficulty, true)
             ->set_items({ "Beginner", "Hard", "Insane" });

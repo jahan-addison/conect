@@ -1,6 +1,7 @@
 
 #include <board.h>
 #include <iostream>
+#include <ranges>
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -117,7 +118,7 @@ namespace fjorir {
     Board::~Board() {
     }
 
-    void Board::set_rotation(float rotation) {
+    constexpr void Board::set_rotation(float rotation) {
         m_rotation = rotation;
     }
 
@@ -154,6 +155,47 @@ namespace fjorir {
         m_shader->begin();
         m_shader->draw_array(Shader::PrimitiveType::Triangle, 0, 12 * 3, true);
         m_shader->end();
+    }
+
+    std::pair<float, float> Board::get_coin_drawing_pos(int x_pos, int y_pos) const {
+        float xx = m_pos.x() + 55.f + (106.2211f * x_pos);
+        float yy = m_pos.y() + m_size.y() - 107.2222f - (55.f * y_pos);
+
+        return { xx, yy };
+    }
+
+
+    bool Board::add_coin(NVGcontext* ctx, Engine::Column col) {
+        auto location = &m_layout[engine->column_to_int(col)];
+        auto test = std::ranges::find(location->begin(), location->end(), 0);
+        if (test != location->end()) {
+            if (!std::filesystem::exists(fs::path("../../../resources/circle-red.png")))
+                throw std::runtime_error("could not find coin image");
+
+            (*location)[test - location->begin()] = nvgCreateImage(ctx, "../../../resources/circle-red.png", 0);
+            if ((*location)[test - location->begin()] == 0)
+                throw std::runtime_error("could not load coin texture");
+            return true;
+        }
+        return false;
+    }
+
+    void Board::draw_coins(NVGcontext* ctx) {
+        int x_pos = 0, y_pos = 0;
+        for (auto const& column : m_layout) {
+            for (auto const& texture : column) {
+                if (texture != 0) {
+                    auto col_position = get_coin_drawing_pos(x_pos, y_pos);
+                    NVGpaint img_pattern = nvgImagePattern(ctx, col_position.first, col_position.second, 72.f, 72.f, 0.f, texture, 1.f);
+
+                    nvgFillPaint(ctx, img_pattern);
+
+                    nvgRect(ctx, col_position.first, col_position.second, 72.f, 72.f);
+                    nvgFill(ctx);
+                }
+            }
+            x_pos++;
+        }
     }
 
     void Board::draw(NVGcontext* ctx) {
@@ -213,9 +255,17 @@ namespace fjorir {
         nvgRect(ctx, m_pos.x(), m_pos.y(), m_size.x(), m_size.y());
         nvgFill(ctx);
 
+        Engine::Column coin = Engine::Column::COL_E;
+
         if (this->engine->get_is_open()) {
-            std::cout << "last coin: " << this->engine->column_to_name(this->engine->pop_coin());
+            coin = this->engine->pop_coin();
+            std::cout << "last coin: " << this->engine->column_to_string(coin) << std::endl;
         }
+        if (coin != Engine::Column::COL_E) {
+            add_coin(ctx, coin);
+        }
+
+        draw_coins(ctx);
 
         //if (!std::filesystem::exists(fs::path("../../../resources/circle-red.png")))
         //    throw std::runtime_error("could not find coin image");
@@ -255,7 +305,7 @@ namespace fjorir {
                 rp = m_render_pass_resolved;
 #endif
             rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
+        }
     }
-}
 
 } // namespace fjorir

@@ -7,6 +7,7 @@
 #include <nanogui/renderpass.h>
 #include <GLFW/glfw3.h>
 #include <engine.h>
+#include <utility>
 #include <array>
 
 #if defined(_WIN32)
@@ -35,17 +36,20 @@ namespace fjorir {
 
         Board(Widget* parent, Engine* engine);
         virtual ~Board();
-        void set_rotation(float rotation);
+        constexpr void set_rotation(float rotation);
         virtual void draw_contents() override;
         virtual void draw(NVGcontext* ctx) override;
     public:
         Engine* engine;
     private:
+        std::pair<float, float> get_coin_drawing_pos(int x_pos, int y_pos) const;
+        bool add_coin(NVGcontext* ctx, Engine::Column col);
+        void draw_coins(NVGcontext* ctx);
+    private:
         using Image = int;
-        using Column = std::array < Image, 7>;
         ref<Shader> m_shader;
         int m_image;
-        std::array<Column, 6> m_layout{};
+        std::array<std::array < Image, 7>, 6> m_layout{};
         float m_rotation;
     };
 
