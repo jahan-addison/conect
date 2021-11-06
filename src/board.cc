@@ -1,13 +1,50 @@
 
 #include <board.h>
 
-#include <filesystem>
 #include <iostream>
 #include <ranges>
 
 namespace fjorir {
 
 namespace fs = std::filesystem;
+
+Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Type type)
+{
+    auto get_resource = [&](std::string_view file)
+    {
+        if (std::filesystem::exists(fs::path(root[0].data()) / file.data()))
+            return fs::path(root[0].data()) / file.data();
+        if (std::filesystem::exists(fs::path(root[1].data()) / file.data()))
+            return fs::path(root[1].data()) / file.data();
+        return fs::path("");
+    };
+    switch (type)
+    {
+    case Type::BOARD:
+    {
+        fs::path path = get_resource(board);
+        if (path.empty())
+            throw std::runtime_error("Board::resource::load_resource(): could not find game board image");
+        return nvgCreateImage(ctx, path.string().c_str(), 0);
+    }
+    case Type::RED_COIN:
+    {
+        auto path = get_resource(red_coin);
+        if (path.empty())
+            throw std::runtime_error("Board::resource::load_resource(): could not find red coin image");
+        return nvgCreateImage(ctx, path.string().c_str(), 0);
+    }
+    case Type::BLUE_COIN:
+    {
+        auto path = get_resource(blue_coin);
+        if (path.empty())
+            throw std::runtime_error("Board::resource::load_resource(): could not find blue coin image");
+        return nvgCreateImage(ctx, path.string().c_str(), 0);
+    }
+    default:
+        throw std::runtime_error("Board::resource::load_resource(): invalid resource");
+    }
+}
 
 inline std::pair<float, float> Board::get_coin_drawing_pos(int x_pos, int y_pos)
 const noexcept
@@ -24,14 +61,11 @@ bool Board::add_coin(NVGcontext* ctx, Engine::Column col)
     auto test = std::ranges::find(location->begin(), location->end(), 0);
     if (test != location->end())
     {
-        if (!std::filesystem::exists(fs::path("../../../resources/circle-red.png")))
-            throw std::runtime_error("could not find coin image");
 
-        (*location)[test - location->begin()] =
-            nvgCreateImage(ctx, "../../../resources/circle-red.png", 0);
+        location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::RED_COIN);
 
-        if ((*location)[test - location->begin()] == 0)
-            throw std::runtime_error("could not load coin texture");
+        if (location->operator[](test - location->begin()) == 0)
+            throw std::runtime_error("Board::add_coin(): could not load coin texture");
 
         return true;
     }
@@ -68,7 +102,7 @@ void Board::draw(NVGcontext* ctx)
 {
     nanogui::Screen* scr = screen();
     if (scr == nullptr)
-        throw std::runtime_error("Canvas::draw(): could not find parent screen!");
+        throw std::runtime_error("Board::draw(): could not find parent screen!");
 
     float pixel_ratio = scr->pixel_ratio();
 
@@ -106,14 +140,12 @@ void Board::draw(NVGcontext* ctx)
     }
 
     m_render_pass->begin();
-    // https://github.com/memononen/nanovg/blob/master/src/nanovg.h
-    if (!std::filesystem::exists(
-        fs::path("../../../resources/fjorir-board-2.png")))
-        throw std::runtime_error("could not find game board image");
+
     if (m_image == -1)
-        m_image = nvgCreateImage(ctx, "../../../resources/fjorir-board-2.png", 0);
+        m_image = res.load_resource(ctx, resource_type::BOARD);
+
     if (m_image == 0)
-        throw std::runtime_error("could not load game board");
+        throw std::runtime_error("Board::draw(): could not load game board");
 
     NVGpaint img_pattern = nvgImagePattern(ctx, m_pos.x(), 0, m_size.x(),
         m_size.y(), 0.f, m_image, 1.f);
@@ -127,12 +159,7 @@ void Board::draw(NVGcontext* ctx)
     Engine::Column coin = Engine::Column::COL_E;
 
     if (this->engine->get_is_open())
-    {
-        coin = this->engine->pop_coin();
-        add_coin(ctx, coin);
-        std::cout << "last coin: " << this->engine->column_to_string(coin)
-            << std::endl;
-    }
+        add_coin(ctx, this->engine->pop_coin());
 
     draw_coins(ctx);
 
@@ -159,4 +186,4 @@ void Board::draw(NVGcontext* ctx)
     }
 }
 
-}  // namespace fjorir
+    }  // namespace fjorir

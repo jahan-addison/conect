@@ -7,6 +7,8 @@
 #include <nanogui/screen.h>
 
 #include <array>
+#include <string_view>
+#include <filesystem>
 #include <utility>
 
 #if defined(_WIN32)
@@ -37,8 +39,29 @@ public:
 
 public:
     Engine* engine;
+    using Image = int;
 
-    struct resources {};
+    struct resource
+    {
+        enum class Type
+        {
+            BOARD = 0,
+            RED_COIN,
+            BLUE_COIN
+        };
+
+        std::array<std::string_view, 2> const root = {
+            "../../../resources/",
+            "./resources/"
+        };
+        std::string_view const board = "fjorir-board-2.png";
+        std::string_view const red_coin = "circle-red.png";
+        std::string_view const blue_coin = "circle-blue.png";
+
+        Board::Image load_resource(NVGcontext* ctx, Type type);
+    };
+
+    using resource_type = resource::Type;
 
 private:
     inline std::pair<float, float> get_coin_drawing_pos(int x_pos,
@@ -47,8 +70,8 @@ private:
     void draw_coins(NVGcontext* ctx) const;
 
 private:
-    using Image = int;
     Image m_image;
+    resource res{};
     std::array<std::array<Image, 6>, 7> m_layout{};
 };
 
