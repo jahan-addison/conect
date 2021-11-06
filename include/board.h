@@ -58,7 +58,7 @@ public:
         std::string_view const red_coin = "circle-red.png";
         std::string_view const blue_coin = "circle-blue.png";
 
-        Board::Image load_resource(NVGcontext* ctx, Type type);
+        Board::Image load_resource(NVGcontext* ctx, Type type) const;
     };
 
     using resource_type = resource::Type;
@@ -70,7 +70,7 @@ private:
     void draw_coins(NVGcontext* ctx) const;
 
 private:
-    Image m_image;
+    Image m_image{};
     resource res{};
     std::array<std::array<Image, 6>, 7> m_layout{};
 };

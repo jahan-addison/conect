@@ -8,7 +8,7 @@ namespace fjorir {
 
 namespace fs = std::filesystem;
 
-Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Type type)
+Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Type type) const
 {
     auto get_resource = [&](std::string_view file)
     {
