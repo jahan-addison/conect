@@ -20,6 +20,7 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
     };
     switch (type)
     {
+
     case Type::BOARD:
     {
         fs::path path = get_resource(board);
@@ -41,6 +42,7 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
             throw std::runtime_error("Board::resource::load_resource(): could not find blue coin image");
         return nvgCreateImage(ctx, path.string().c_str(), 0);
     }
+
     default:
         throw std::runtime_error("Board::resource::load_resource(): invalid resource");
     }
@@ -55,14 +57,16 @@ const noexcept
     return { xx, yy };
 }
 
-bool Board::add_coin(NVGcontext* ctx, Engine::Column col)
+bool Board::add_coin(NVGcontext* ctx, Engine::Column col, Engine::Color color)
 {
     auto location = &m_layout[engine->column_to_int(col)];
     auto test = std::ranges::find(location->begin(), location->end(), 0);
     if (test != location->end())
     {
-
-        location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::RED_COIN);
+        if (color == Engine::Color::BLUE)
+            location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::BLUE_COIN);
+        else
+            location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::RED_COIN);
 
         if (location->operator[](test - location->begin()) == 0)
             throw std::runtime_error("Board::add_coin(): could not load coin texture");
@@ -156,10 +160,8 @@ void Board::draw(NVGcontext* ctx)
     nvgRect(ctx, m_pos.x(), m_pos.y(), m_size.x(), m_size.y());
     nvgFill(ctx);
 
-    Engine::Column coin = Engine::Column::COL_E;
-
     if (this->engine->get_is_open())
-        add_coin(ctx, this->engine->pop_coin());
+        add_coin(ctx, this->engine->pop_coin(), Engine::Color::BLUE);
 
     draw_coins(ctx);
 
@@ -186,4 +188,4 @@ void Board::draw(NVGcontext* ctx)
     }
 }
 
-    }  // namespace fjorir
+}  // namespace fjorir

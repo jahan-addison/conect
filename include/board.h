@@ -66,7 +66,7 @@ public:
 private:
     inline std::pair<float, float> get_coin_drawing_pos(int x_pos,
         int y_pos) const noexcept;
-    bool add_coin(NVGcontext* ctx, Engine::Column col);
+    bool add_coin(NVGcontext* ctx, Engine::Column col, Engine::Color color);
     void draw_coins(NVGcontext* ctx) const;
 
 private:
