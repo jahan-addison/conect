@@ -36,7 +36,6 @@ void GUI::set_board_actions()
         b->set_callback([&, this, i]
             {
                 this->engine.add_coin(static_cast<Engine::Column>(i));
-                std::cout << "pushed: " << i << std::endl;
             });
     }
 }

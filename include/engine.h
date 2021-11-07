@@ -14,6 +14,7 @@ public:
     Engine(Engine& engine) = delete;
 
 public:
+
     enum class Color : int { RED = 0, BLUE };
     enum class Column : int
     {
@@ -27,7 +28,7 @@ public:
         COL_7,
     };
 
-    constexpr bool get_is_open() const noexcept { return is_open; }
+    constexpr bool get_is_receiving() const noexcept { return is_receiving; }
 
     constexpr std::string_view column_to_string(Column col) const noexcept
     {
@@ -78,28 +79,25 @@ public:
         }
     }
 
-    inline Column last() const noexcept
-    {
-        return action_queue.empty() ? Column::COL_E : action_queue.front();
-    }
-
     inline void add_coin(Column col)
     {
-        is_open = true;
-        action_queue.emplace_front(col);
+        is_receiving = true;
+        action_queue.emplace_front(is_red ? Color::RED : Color::BLUE,
+            col);
     }
 
-    Column pop_coin() noexcept
+    std::pair<Color, Column> pop_coin() noexcept
     {
         auto coin = action_queue.front();
         action_queue.pop_front();
-        is_open = false;
+        is_receiving = false;
+        is_red = !is_red;
         return coin;
     }
 
 private:
-    // std::forward_list<std::pair<Color, COLUMN>> action_queue{};
-    std::forward_list<Column> action_queue{};
-    bool is_open{ false };
+    std::forward_list<std::pair<Color, Column>> action_queue{};
+    bool is_red{ false };
+    bool is_receiving{ false };
 };
 }  // namespace fjorir

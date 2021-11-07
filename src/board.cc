@@ -18,9 +18,9 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
             return fs::path(root[1].data()) / file.data();
         return fs::path("");
     };
+
     switch (type)
     {
-
     case Type::BOARD:
     {
         fs::path path = get_resource(board);
@@ -48,7 +48,7 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
     }
 }
 
-inline std::pair<float, float> Board::get_coin_drawing_pos(int x_pos, int y_pos)
+inline std::pair<float, float> Board::get_coin_drawing_pos(float x_pos, float y_pos)
 const noexcept
 {
     float xx = m_pos.x() + 55.f + (106.2211f * x_pos);
@@ -86,7 +86,8 @@ void Board::draw_coins(NVGcontext* ctx) const
         {
             if (texture != 0)
             {
-                auto col_position = get_coin_drawing_pos(x_pos, y_pos);
+                auto col_position = get_coin_drawing_pos(static_cast<float>(x_pos),
+                    static_cast<float>(y_pos));
                 NVGpaint img_pattern =
                     nvgImagePattern(ctx, col_position.first, col_position.second, 72.f,
                         72.f, 0.f, texture, 1.f);
@@ -160,8 +161,12 @@ void Board::draw(NVGcontext* ctx)
     nvgRect(ctx, m_pos.x(), m_pos.y(), m_size.x(), m_size.y());
     nvgFill(ctx);
 
-    if (this->engine->get_is_open())
-        add_coin(ctx, this->engine->pop_coin(), Engine::Color::BLUE);
+    if (this->engine->get_is_receiving())
+    {
+        auto coin = this->engine->pop_coin();
+        add_coin(ctx, coin.second, coin.first);
+
+    }
 
     draw_coins(ctx);
 
@@ -185,7 +190,7 @@ void Board::draw(NVGcontext* ctx)
             rp = m_render_pass_resolved;
 #endif
         rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
-    }
+}
 }
 
 }  // namespace fjorir
