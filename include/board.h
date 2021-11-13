@@ -49,8 +49,8 @@ public:
         State() {}
         State(State& state) = delete;
     private:
-        bool is_won();
-        bool is_tie();
+        bool is_won() const;
+        bool is_tie() const;
     public:
         enum class Token
         {
@@ -58,7 +58,7 @@ public:
             TIE,
             PLAY
         };
-        Token get_state();
+        Token get_state() const;
     };
 
     struct resource

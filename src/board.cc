@@ -47,7 +47,7 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
     }
 }
 
-bool Board::State::is_won()
+bool Board::State::is_won() const
 {
     std::cout << std::endl;
     for (auto const& k : layout)
@@ -59,7 +59,7 @@ bool Board::State::is_won()
     return true;
 }
 
-bool Board::State::is_tie()
+bool Board::State::is_tie() const
 {
     std::cout << std::endl;
     for (auto const& k : layout)
@@ -71,7 +71,7 @@ bool Board::State::is_tie()
     return true;
 }
 
-Board::State::Token Board::State::get_state()
+Board::State::Token Board::State::get_state() const
 {
     this->is_won();
     return Board::State::Token::PLAY;
@@ -197,9 +197,8 @@ void Board::draw(NVGcontext* ctx)
     if (this->engine->get_is_receiving())
     {
         auto coin = this->engine->pop_coin();
-        state.get_state();
         add_coin(ctx, coin.second, coin.first);
-
+        state.get_state();
     }
 
     draw_coins(ctx);
