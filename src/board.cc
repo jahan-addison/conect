@@ -1,6 +1,5 @@
 
 #include <board.h>
-
 #include <iostream>
 #include <ranges>
 
@@ -48,6 +47,37 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
     }
 }
 
+bool Board::State::is_won()
+{
+    std::cout << std::endl;
+    for (auto const& k : layout)
+    {
+        std::cout << std::endl;
+        for (auto const& j : k)
+            std::cout << " " << j << " ";
+    }
+    return true;
+}
+
+bool Board::State::is_tie()
+{
+    std::cout << std::endl;
+    for (auto const& k : layout)
+    {
+        std::cout << std::endl;
+        for (auto const& j : k)
+            std::cout << " " << j << " ";
+    }
+    return true;
+}
+
+Board::State::Token Board::State::get_state()
+{
+    this->is_won();
+    return Board::State::Token::PLAY;
+}
+
+
 inline std::pair<float, float> Board::get_coin_drawing_pos(float x_pos, float y_pos)
 const noexcept
 {
@@ -63,11 +93,14 @@ bool Board::add_coin(NVGcontext* ctx, Engine::Column col, Engine::Color color)
     auto test = std::ranges::find(location->begin(), location->end(), 0);
     if (test != location->end())
     {
+        state.layout[engine->column_to_int(col)][test - location->begin()] = color;
         if (color == Engine::Color::BLUE)
+        {
             location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::BLUE_COIN);
-        else
+        } else
+        {
             location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::RED_COIN);
-
+        }
         if (location->operator[](test - location->begin()) == 0)
             throw std::runtime_error("Board::add_coin(): could not load coin texture");
 
@@ -164,6 +197,7 @@ void Board::draw(NVGcontext* ctx)
     if (this->engine->get_is_receiving())
     {
         auto coin = this->engine->pop_coin();
+        state.get_state();
         add_coin(ctx, coin.second, coin.first);
 
     }
@@ -190,7 +224,7 @@ void Board::draw(NVGcontext* ctx)
             rp = m_render_pass_resolved;
 #endif
         rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
-}
+    }
 }
 
 }  // namespace fjorir

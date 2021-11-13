@@ -7,6 +7,7 @@
 #include <nanogui/screen.h>
 
 #include <array>
+#include <memory>
 #include <string_view>
 #include <filesystem>
 #include <utility>
@@ -30,16 +31,35 @@ constexpr float Pi = 3.14159f;
 class Board : public Canvas
 {
 public:
-    Board(Widget* parent, Engine* engine)
+    Board(Widget* parent, std::shared_ptr<Engine> engine)
         : Canvas(parent, 1), engine(engine), m_image(-1)
     {
     }
-    virtual ~Board() {}
     virtual void draw(NVGcontext* ctx) override;
 
 public:
-    Engine* engine;
+    std::shared_ptr<Engine> engine;
     using Image = int;
+
+    class State
+    {
+    public:
+        using Matrix = std::array<std::array<Engine::Color, 6>, 7>;
+        Matrix layout{};
+        State() {}
+        State(State& state) = delete;
+    private:
+        bool is_won();
+        bool is_tie();
+    public:
+        enum class Token
+        {
+            WON = 0,
+            TIE,
+            PLAY
+        };
+        Token get_state();
+    };
 
     struct resource
     {
@@ -70,6 +90,7 @@ private:
     void draw_coins(NVGcontext* ctx) const;
 
 private:
+    State state{};
     Image m_image{};
     resource res{};
     std::array<std::array<Image, 6>, 7> m_layout{};

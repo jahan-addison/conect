@@ -11,7 +11,9 @@ GUI::GUI(bool init)
         true,
         false,
         4,
-        1)
+        1),
+    engine(std::make_shared<Engine>())
+
 {
     this->set_sidebar();
     this->set_board();
@@ -35,7 +37,7 @@ void GUI::set_board_actions()
         b->set_background_color(Color(255, 255, 255, 35));
         b->set_callback([&, this, i]
             {
-                this->engine.add_coin(static_cast<Engine::Column>(i));
+                this->engine->add_coin(static_cast<Engine::Column>(i));
             });
     }
 }
@@ -67,7 +69,7 @@ void GUI::set_board()
     ref<Window> window = new Window(this, " ");
     window->set_fixed_size(Vector2i(820, 560));
     window->set_position(Vector2i(/*820, 520*/ 250, 120));
-    canvas = new Board(window, &engine);
+    canvas = std::make_shared<Board>(window, engine);
     canvas->set_background_color({ 100, 100, 100, 255 });
     canvas->set_fixed_size({ 820, 520 });
 

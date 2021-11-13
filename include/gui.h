@@ -3,6 +3,7 @@
 #include <board.h>
 #include <engine.h>
 #include <nanogui/nanogui.h>
+#include <memory>
 #include <iostream>
 
 namespace fjorir {
@@ -18,8 +19,9 @@ public:
     GUI(GUI& gui) = delete;
 
 private:
-    Engine engine{};
-    Board* canvas;
+    std::shared_ptr<Engine> engine;
+    std::shared_ptr<Board> canvas;
+
     void set_board_actions();
     void set_sidebar();
     void set_board();

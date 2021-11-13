@@ -14,8 +14,27 @@ public:
     Engine(Engine& engine) = delete;
 
 public:
+    enum class Color : int
+    {
+        RED = 2,
+        BLUE
+    };
 
-    enum class Color : int { RED = 0, BLUE };
+    inline friend std::ostream& operator << (std::ostream& os, Color const& obj)
+    {
+        auto j = static_cast<std::underlying_type<Color>::type>(obj);
+        switch (j)
+        {
+        case 0: os << 0;
+            break;
+        case 2: os << "Red";
+            break;
+        case 3: os << "Blue";
+            break;
+        }
+        return os;
+    }
+
     enum class Column : int
     {
         COL_E = 0,
