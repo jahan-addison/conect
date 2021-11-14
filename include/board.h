@@ -58,7 +58,7 @@ public:
             TIE,
             PLAY
         };
-        Token get_state() const;
+        std::pair<Engine::Color, Token> get_state() const;
     };
 
     struct resource

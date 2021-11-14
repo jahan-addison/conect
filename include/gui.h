@@ -17,7 +17,6 @@ class GUI : public Screen
 public:
     explicit GUI(bool init = true);
     GUI(GUI& gui) = delete;
-
 private:
     std::shared_ptr<Engine> engine;
     std::shared_ptr<Board> canvas;

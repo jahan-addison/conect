@@ -1,5 +1,6 @@
 
 #include <board.h>
+#include <nanogui/messagedialog.h>
 #include <iostream>
 #include <ranges>
 
@@ -49,14 +50,14 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
 
 bool Board::State::is_won() const
 {
-    std::cout << std::endl;
+    bool won = false;
     for (auto const& k : layout)
     {
         std::cout << std::endl;
         for (auto const& j : k)
             std::cout << " " << j << " ";
     }
-    return true;
+    return won;
 }
 
 bool Board::State::is_tie() const
@@ -71,10 +72,10 @@ bool Board::State::is_tie() const
     return true;
 }
 
-Board::State::Token Board::State::get_state() const
+std::pair<Engine::Color, Board::State::Token> Board::State::get_state() const
 {
     this->is_won();
-    return Board::State::Token::PLAY;
+    return { Engine::Color::BLUE, Board::State::Token::PLAY };
 }
 
 
@@ -199,6 +200,11 @@ void Board::draw(NVGcontext* ctx)
         auto coin = this->engine->pop_coin();
         add_coin(ctx, coin.second, coin.first);
         state.get_state();
+        //this->inc_ref();
+        //ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
+        //    nanogui::MessageDialog::Type::Information,
+        //    " ",
+        //    "test");
     }
 
     draw_coins(ctx);
@@ -224,6 +230,6 @@ void Board::draw(NVGcontext* ctx)
 #endif
         rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
     }
-}
+    }
 
 }  // namespace fjorir
