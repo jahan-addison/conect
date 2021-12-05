@@ -41,24 +41,15 @@ public:
     std::shared_ptr<Engine> engine;
     using Image = int;
 
-    class State
+    struct State
     {
-    public:
-        using Matrix = std::array<std::array<Engine::Color, 6>, 7>;
-        Matrix layout{};
+        std::array<std::array<Engine::Color, 6>, 7> layout{};
         State() {}
         State(State& state) = delete;
+        Engine::Color is_won();
+        bool is_full() const;
     private:
-        bool is_won() const;
-        bool is_tie() const;
-    public:
-        enum class Token
-        {
-            WON = 0,
-            TIE,
-            PLAY
-        };
-        std::pair<Engine::Color, Token> get_state() const;
+        Engine::Color get_diagonal_same_color_of_four(bool start_left);
     };
 
     struct resource

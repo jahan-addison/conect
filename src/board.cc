@@ -48,34 +48,71 @@ Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Ty
     }
 }
 
-bool Board::State::is_won() const
+Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = true)
 {
-    bool won = false;
-    for (auto const& k : layout)
+    constexpr int ROW = 7;
+    constexpr int COL = 6;
+    auto color = Engine::Color::NONE;
+    // There will be ROW+COL-1 lines
+    for (int line = 1;
+        line <= (ROW + COL - 1);
+        line++)
     {
-        std::cout << std::endl;
-        for (auto const& j : k)
-            std::cout << " " << j << " ";
+        /* Get column index of the first element
+           in this line of output.
+           The index is 0 for first ROW lines and
+           line - ROW for remaining lines  */
+        int start_col = std::max(0, line - ROW);
+
+        /* Get count of elements in this line. The
+           count of elements is equal to minimum of
+           line number, COL-start_col and ROW */
+        int count = std::min(std::min(line, COL - start_col), ROW);
+
+        auto last = Engine::Color::NONE;
+        int adjacent = 0;
+        for (int j = 0; j < count; j++)
+        {
+            auto previous = last;
+            if (start_left)
+                last = layout[std::min(line, ROW) - j - 1][start_col + COL - j - 1];
+            else
+                last = layout[std::min(ROW, line) - j - 1][start_col + j];
+            //std::cout << std::setw(5) <<
+            //    layout[std::min(ROW, line) - j - 1][start_col + COL - j - 1];
+            if ((last == Engine::Color::RED or last == Engine::Color::BLUE) and previous == last)
+                adjacent++;
+            //std::cout << "adjancent: " << adjacent << std::endl;
+            if (adjacent > 2)
+            {
+                color = last;
+                break;
+            }
+        }
+        //std::cout << std::endl;
     }
-    return won;
+
+    return color;
 }
 
-bool Board::State::is_tie() const
+Engine::Color Board::State::is_won()
 {
-    std::cout << std::endl;
-    for (auto const& k : layout)
-    {
-        std::cout << std::endl;
-        for (auto const& j : k)
-            std::cout << " " << j << " ";
-    }
-    return true;
+    auto color = this->get_diagonal_same_color_of_four();
+    if (color == Engine::Color::NONE)
+        color = this->get_diagonal_same_color_of_four(false);
+    return color;
 }
 
-std::pair<Engine::Color, Board::State::Token> Board::State::get_state() const
+bool Board::State::is_full() const
 {
-    this->is_won();
-    return { Engine::Color::BLUE, Board::State::Token::PLAY };
+    bool full = true;
+    for (auto const& k : layout)
+    {
+        for (auto const& j : k)
+            if (j != Engine::Color::RED and j != Engine::Color::BLUE)
+                full = false;
+    }
+    return full;
 }
 
 
@@ -199,12 +236,36 @@ void Board::draw(NVGcontext* ctx)
     {
         auto coin = this->engine->pop_coin();
         add_coin(ctx, coin.second, coin.first);
-        state.get_state();
-        //this->inc_ref();
-        //ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
-        //    nanogui::MessageDialog::Type::Information,
-        //    " ",
-        //    "test");
+        if (auto check = this->state.is_won(); check != Engine::Color::NONE)
+        {
+            switch (check)
+            {
+            case Engine::Color::RED:
+            {
+                ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
+                    nanogui::MessageDialog::Type::Information,
+                    " ",
+                    "Player RED is the winner!");
+            }
+            break;
+            case Engine::Color::BLUE:
+            {
+                ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
+                    nanogui::MessageDialog::Type::Information,
+                    " ",
+                    "Player BLUE is the winner!");
+            }
+            break;
+            }
+        }
+        if (this->state.is_full())
+        {
+            this->inc_ref();
+            ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
+                nanogui::MessageDialog::Type::Information,
+                " ",
+                "The game was a tie!");
+        }
     }
 
     draw_coins(ctx);
@@ -230,6 +291,6 @@ void Board::draw(NVGcontext* ctx)
 #endif
         rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
     }
-    }
+}
 
 }  // namespace fjorir

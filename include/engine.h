@@ -17,7 +17,8 @@ public:
     enum class Color : int
     {
         RED = 2,
-        BLUE
+        BLUE,
+        NONE
     };
 
     inline friend std::ostream& operator << (std::ostream& os, Color const& obj)
@@ -31,6 +32,7 @@ public:
             break;
         case 3: os << "Blue";
             break;
+        case 4: os << "NULL";
         }
         return os;
     }
