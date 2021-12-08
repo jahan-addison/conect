@@ -38,7 +38,7 @@ set(SOURCES          # All .cc files in src/
 set(TESTFILES        # All .cc files in tests/
     tests/main.cc
 )
-set(LIBRARY_NAME fjorir)  # Default name for the library built from src/*.cc (change if you wish)
+set(LIBRARY_NAME linea)  # Default name for the library built from src/*.cc (change if you wish)
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)

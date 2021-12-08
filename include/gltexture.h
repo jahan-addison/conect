@@ -12,7 +12,7 @@
 #endif
 #include <stb_image.h>
 
-namespace fjorir {
+namespace linea {
 
 class GLTexture
 {
@@ -111,4 +111,4 @@ private:
     std::string mTextureName;
     GLuint mTextureId;
 };
-}  // namespace fjorir
+}  // namespace linea

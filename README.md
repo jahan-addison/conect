@@ -1,10 +1,12 @@
-# fjórir
+# línea
 
 > Connect-four, five, and fun variations with AI and network multiplayer support 🎲
 
 ![img](./resources/screenshot-2.png)
 
-You can monitor the progress on [the project kanban boards](https://github.com/jahan-addison/fjorir/projects).
+## Features
+
+...
 
 
 ## Building
@@ -19,17 +21,7 @@ Example:
 > make
 > ./main
 > make test      # Makes and runs the tests.
-> make coverage  # Generate a coverage report.
-> make doc       # Generate html documentation.
 ```
-
-## Services
-
-If the repository is activated with Travis-CI, then unit tests will be built and executed on each commit.
-The same is true if the repository is activated with Appveyor.
-
-If the repository is activated with Coveralls/Codecov, then deployment to Travis will also calculate code coverage and
-upload this to Coveralls.io and/or Codecov.io
 
 
 ## Tests

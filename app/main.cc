@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 
         /* scoped variables */
         {
-            nanogui::ref<fjorir::GUI> app = new fjorir::GUI();
+            nanogui::ref<linea::GUI> app = new linea::GUI();
             app->dec_ref();
             app->draw_all();
             app->set_visible(true);

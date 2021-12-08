@@ -6,7 +6,7 @@
 #include <memory>
 #include <iostream>
 
-namespace fjorir {
+namespace linea {
 
 using namespace nanogui;
 
@@ -27,4 +27,4 @@ private:
     difficulty default_difficulty = difficulty::Beginner;
 };
 
-}  // namespace fjorir
+}  // namespace linea

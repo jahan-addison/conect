@@ -19,7 +19,7 @@
 #include <windows.h>
 #endif
 
-namespace fjorir {
+namespace linea {
 
 using nanogui::Canvas;
 using nanogui::ref;
@@ -52,7 +52,7 @@ public:
         Engine::Color get_diagonal_same_color_of_four(bool start_left);
     };
 
-    struct resource
+    struct Resource
     {
         enum class Type
         {
@@ -61,18 +61,18 @@ public:
             BLUE_COIN
         };
 
-        std::array<std::string_view, 2> const root = {
+        std::array<std::string_view, 2> const file_roots = {
             "../../../resources/",
             "./resources/"
         };
-        std::string_view const board = "fjorir-board-2.png";
+        std::string_view const board = "linea-board-2.png";
         std::string_view const red_coin = "circle-red.png";
         std::string_view const blue_coin = "circle-blue.png";
 
         Board::Image load_resource(NVGcontext* ctx, Type type) const;
     };
 
-    using resource_type = resource::Type;
+    using resource_type = Resource::Type;
 
 private:
     inline std::pair<float, float> get_coin_drawing_pos(float x_pos,
@@ -83,8 +83,8 @@ private:
 private:
     State state{};
     Image m_image{};
-    resource res{};
+    Resource res{};
     std::array<std::array<Image, 6>, 7> m_layout{};
 };
 
-}  // namespace fjorir
+}  // namespace linea

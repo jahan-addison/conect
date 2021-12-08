@@ -1,10 +1,10 @@
 #include <gui.h>
 
-namespace fjorir {
+namespace linea {
 
 GUI::GUI(bool init)
     : Screen(Vector2i(1150, 800),
-        "fjorir [GL 4.1]",
+        "linea [GL 4.1]",
         true,
         false,
         true,
@@ -76,4 +76,4 @@ void GUI::set_board()
     perform_layout();
 }
 
-}  // namespace fjorir
+}  // namespace linea

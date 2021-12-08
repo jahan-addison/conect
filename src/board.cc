@@ -4,40 +4,45 @@
 #include <iostream>
 #include <ranges>
 
-namespace fjorir {
+namespace linea {
 
 namespace fs = std::filesystem;
 
-Board::Image Board::resource::load_resource(NVGcontext* ctx, Board::resource::Type type) const
-{
-    auto get_resource = [&](std::string_view file)
-    {
-        if (std::filesystem::exists(fs::path(root[0].data()) / file.data()))
-            return fs::path(root[0].data()) / file.data();
-        if (std::filesystem::exists(fs::path(root[1].data()) / file.data()))
-            return fs::path(root[1].data()) / file.data();
-        return fs::path("");
-    };
+namespace {
 
+inline auto get_resource(std::string_view file, auto const& file_roots)
+{
+    if (std::filesystem::exists(fs::path(file_roots[0].data()) / file.data()))
+        return fs::path(file_roots[0].data()) / file.data();
+    if (std::filesystem::exists(fs::path(file_roots[1].data()) / file.data()))
+        return fs::path(file_roots[1].data()) / file.data();
+    return fs::path("");
+};
+
+} // namespace
+
+
+Board::Image Board::Resource::load_resource(NVGcontext* ctx, Board::Resource::Type type) const
+{
     switch (type)
     {
     case Type::BOARD:
     {
-        fs::path path = get_resource(board);
+        fs::path path = get_resource(board, file_roots);
         if (path.empty())
             throw std::runtime_error("Board::resource::load_resource(): could not find game board image");
         return nvgCreateImage(ctx, path.string().c_str(), 0);
     }
     case Type::RED_COIN:
     {
-        auto path = get_resource(red_coin);
+        auto path = get_resource(red_coin, file_roots);
         if (path.empty())
             throw std::runtime_error("Board::resource::load_resource(): could not find red coin image");
         return nvgCreateImage(ctx, path.string().c_str(), 0);
     }
     case Type::BLUE_COIN:
     {
-        auto path = get_resource(blue_coin);
+        auto path = get_resource(blue_coin, file_roots);
         if (path.empty())
             throw std::runtime_error("Board::resource::load_resource(): could not find blue coin image");
         return nvgCreateImage(ctx, path.string().c_str(), 0);
@@ -78,18 +83,14 @@ Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = tr
                 last = layout[std::min(line, ROW) - j - 1][start_col + COL - j - 1];
             else
                 last = layout[std::min(ROW, line) - j - 1][start_col + j];
-            //std::cout << std::setw(5) <<
-            //    layout[std::min(ROW, line) - j - 1][start_col + COL - j - 1];
             if ((last == Engine::Color::RED or last == Engine::Color::BLUE) and previous == last)
                 adjacent++;
-            //std::cout << "adjancent: " << adjacent << std::endl;
             if (adjacent > 2)
             {
                 color = last;
                 break;
             }
         }
-        //std::cout << std::endl;
     }
 
     return color;
@@ -245,7 +246,7 @@ void Board::draw(NVGcontext* ctx)
                 ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
                     nanogui::MessageDialog::Type::Information,
                     " ",
-                    "Player RED is the winner!");
+                    "RED player is the winner!");
             }
             break;
             case Engine::Color::BLUE:
@@ -253,7 +254,7 @@ void Board::draw(NVGcontext* ctx)
                 ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
                     nanogui::MessageDialog::Type::Information,
                     " ",
-                    "Player BLUE is the winner!");
+                    "BLUE player is the winner!");
             }
             break;
             }
@@ -293,4 +294,4 @@ void Board::draw(NVGcontext* ctx)
     }
 }
 
-}  // namespace fjorir
+}  // namespace linea

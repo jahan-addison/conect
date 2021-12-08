@@ -5,7 +5,7 @@
 #include <forward_list>
 #include <string_view>
 
-namespace fjorir {
+namespace linea {
 
 class Engine
 {
@@ -121,4 +121,4 @@ private:
     bool is_red{ false };
     bool is_receiving{ false };
 };
-}  // namespace fjorir
+}  // namespace linea
