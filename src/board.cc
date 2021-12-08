@@ -53,11 +53,46 @@ Board::Image Board::Resource::load_resource(NVGcontext* ctx, Board::Resource::Ty
     }
 }
 
-Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = true)
+//test:
+Engine::Color Board::State::get_in_a_row_same_color_of_four() const
 {
-    constexpr int ROW = 7;
-    constexpr int COL = 6;
+    auto [row_c, col_c] = std::make_tuple(Engine::Color::NONE, Engine::Color::NONE);
+    auto adjacent_r = 0, adjacent_c = 0;
+    for (auto const& row : layout)
+    {
+        auto cols = std::begin(row);
+        if ((row_c == Engine::Color::BLUE or row_c == Engine::Color::RED) and row_c == *cols)
+            adjacent_r++;
+        else if (row_c != *cols)
+            adjacent_r = 0;
+        row_c = *cols;
+        //std::cout << "adjacent:" << adjacent_r << std::endl;
+        if (adjacent_r > 2)
+        {
+            return *cols;
+        }
+        col_c = Engine::Color::NONE;
+        adjacent_c = 0;
+        for (auto end = std::end(row); cols != end; cols++)
+        {
+            if ((col_c == Engine::Color::BLUE or col_c == Engine::Color::RED) and col_c == *cols)
+                adjacent_c++;
+            if (adjacent_c > 2)
+            {
+                return *cols;
+            }
+            col_c = *cols;
+        }
+    }
+    return Engine::Color::NONE;
+}
+
+//test:
+Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = true) const
+{
     auto color = Engine::Color::NONE;
+    int ROW = 7;
+    int COL = 6;
     // There will be ROW+COL-1 lines
     for (int line = 1;
         line <= (ROW + COL - 1);
@@ -101,9 +136,12 @@ Engine::Color Board::State::is_won()
     auto color = this->get_diagonal_same_color_of_four();
     if (color == Engine::Color::NONE)
         color = this->get_diagonal_same_color_of_four(false);
+    if (color == Engine::Color::NONE)
+        color = this->get_in_a_row_same_color_of_four();
     return color;
 }
 
+//test:
 bool Board::State::is_full() const
 {
     bool full = true;

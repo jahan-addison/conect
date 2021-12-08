@@ -44,12 +44,13 @@ public:
     struct State
     {
         std::array<std::array<Engine::Color, 6>, 7> layout{};
-        State() {}
+        State() = default;
         State(State& state) = delete;
         Engine::Color is_won();
         bool is_full() const;
     private:
-        Engine::Color get_diagonal_same_color_of_four(bool start_left);
+        Engine::Color get_diagonal_same_color_of_four(bool start_left) const;
+        Engine::Color get_in_a_row_same_color_of_four() const;
     };
 
     struct Resource
