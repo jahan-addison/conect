@@ -9,7 +9,20 @@
 ...
 
 
-## Building
+## Development
+
+**Note**: You will need at least gcc/g++10, python3.4, and cmake 3.14.
+
+* Install submodules
+
+> `git submodule update --init --recursive`
+
+* Install dependencies (debian/ubuntu)
+
+> `sudo apt-get install libx11-dev xorg-dev libglu1-mesa-dev python-dev python3-dev`
+
+
+### Building
 
 Build by making a build directory (i.e. `build/`), run `cmake` in that dir, and then use `make` to build the desired target.
 
