@@ -2,22 +2,29 @@
 
 #include <board.h>
 #include <engine.h>
-#include <nanogui/nanogui.h>
-#include <memory>
 #include <iostream>
+#include <memory>
+#include <nanogui/nanogui.h>
 
-namespace linea {
+namespace linea
+{
 
 using namespace nanogui;
 
-enum class difficulty : int { Beginner = 0, Hard, Insane };
+enum class difficulty : int
+{
+    Beginner = 0,
+    Hard,
+    Insane
+};
 
 class GUI : public Screen
 {
-public:
+  public:
     explicit GUI(bool init = true);
-    GUI(GUI& gui) = delete;
-private:
+    GUI(GUI &gui) = delete;
+
+  private:
     std::shared_ptr<Engine> engine;
     std::shared_ptr<Board> canvas;
 
@@ -27,4 +34,4 @@ private:
     difficulty default_difficulty = difficulty::Beginner;
 };
 
-}  // namespace linea
+} // namespace linea

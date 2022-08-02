@@ -1,43 +1,40 @@
 #pragma once
 
-#include <nanogui/opengl.h>
 #include <memory>
+#include <nanogui/opengl.h>
 
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
 #if defined(_MSC_VER)
-#pragma warning(disable : 4505)  // don't warn about dead code in stb_image.h
+#pragma warning(disable : 4505) // don't warn about dead code in stb_image.h
 #elif defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 #include <stb_image.h>
 
-namespace linea {
+namespace linea
+{
 
 class GLTexture
 {
-public:
-    using handleType = std::unique_ptr<uint8_t[], void (*)(void*)>;
+  public:
+    using handleType = std::unique_ptr<uint8_t[], void (*)(void *)>;
     GLTexture() = default;
-    GLTexture(const std::string& textureName)
-        : mTextureName(textureName), mTextureId(0)
+    GLTexture(const std::string &textureName) : mTextureName(textureName), mTextureId(0)
     {
     }
 
-    GLTexture(const std::string& textureName, GLint textureId)
-        : mTextureName(textureName), mTextureId(textureId)
+    GLTexture(const std::string &textureName, GLint textureId) : mTextureName(textureName), mTextureId(textureId)
     {
     }
 
-    GLTexture(const GLTexture& other) = delete;
-    GLTexture(GLTexture&& other) noexcept
-        : mTextureName(std::move(other.mTextureName)),
-        mTextureId(other.mTextureId)
+    GLTexture(const GLTexture &other) = delete;
+    GLTexture(GLTexture &&other) noexcept : mTextureName(std::move(other.mTextureName)), mTextureId(other.mTextureId)
     {
         other.mTextureId = 0;
     }
-    GLTexture& operator=(const GLTexture& other) = delete;
-    GLTexture& operator=(GLTexture&& other) noexcept
+    GLTexture &operator=(const GLTexture &other) = delete;
+    GLTexture &operator=(GLTexture &&other) noexcept
     {
         mTextureName = std::move(other.mTextureName);
         std::swap(mTextureId, other.mTextureId);
@@ -49,14 +46,20 @@ public:
             glDeleteTextures(1, &mTextureId);
     }
 
-    GLuint texture() const { return mTextureId; }
-    const std::string& textureName() const { return mTextureName; }
+    GLuint texture() const
+    {
+        return mTextureId;
+    }
+    const std::string &textureName() const
+    {
+        return mTextureName;
+    }
 
     /**
      *  Load a file in memory and create an OpenGL texture.
      *  Returns a handle type (an std::unique_ptr) to the loaded pixels.
      */
-    handleType load(const std::string& fileName)
+    handleType load(const std::string &fileName)
     {
         if (mTextureId)
         {
@@ -65,12 +68,9 @@ public:
         }
         int force_channels = 0;
         int w, h, n;
-        handleType textureData(
-            stbi_load(fileName.c_str(), &w, &h, &n, force_channels),
-            stbi_image_free);
+        handleType textureData(stbi_load(fileName.c_str(), &w, &h, &n, force_channels), stbi_image_free);
         if (!textureData)
-            throw std::invalid_argument("Could not load texture data from file " +
-                fileName);
+            throw std::invalid_argument("Could not load texture data from file " + fileName);
         glGenTextures(1, &mTextureId);
         glBindTexture(GL_TEXTURE_2D, mTextureId);
         GLint internalFormat;
@@ -98,8 +98,7 @@ public:
             format = 0;
             break;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format,
-            GL_UNSIGNED_BYTE, textureData.get());
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, textureData.get());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -107,8 +106,8 @@ public:
         return textureData;
     }
 
-private:
+  private:
     std::string mTextureName;
     GLuint mTextureId;
 };
-}  // namespace linea
+} // namespace linea

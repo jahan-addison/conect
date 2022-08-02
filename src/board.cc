@@ -1,16 +1,19 @@
 
 #include <board.h>
 #include <nanogui/messagedialog.h>
+
 #include <iostream>
 #include <ranges>
 
-namespace linea {
+namespace linea
+{
 
 namespace fs = std::filesystem;
 
-namespace {
+namespace
+{
 
-inline auto get_resource(std::string_view file, auto const& file_roots)
+inline auto get_resource(std::string_view file, auto const &file_roots)
 {
     if (std::filesystem::exists(fs::path(file_roots[0].data()) / file.data()))
         return fs::path(file_roots[0].data()) / file.data();
@@ -21,27 +24,24 @@ inline auto get_resource(std::string_view file, auto const& file_roots)
 
 } // namespace
 
-
-Board::Image Board::Resource::load_resource(NVGcontext* ctx, Board::Resource::Type type) const
+Board::Image Board::Resource::load_resource(NVGcontext *ctx, Board::Resource::Type type) const
 {
     switch (type)
     {
-    case Type::BOARD:
-    {
+    case Type::BOARD: {
         fs::path path = get_resource(board, file_roots);
         if (path.empty())
-            throw std::runtime_error("Board::resource::load_resource(): could not find game board image");
+            throw std::runtime_error("Board::resource::load_resource(): could not find game board "
+                                     "image");
         return nvgCreateImage(ctx, path.string().c_str(), 0);
     }
-    case Type::RED_COIN:
-    {
+    case Type::RED_COIN: {
         auto path = get_resource(red_coin, file_roots);
         if (path.empty())
             throw std::runtime_error("Board::resource::load_resource(): could not find red coin image");
         return nvgCreateImage(ctx, path.string().c_str(), 0);
     }
-    case Type::BLUE_COIN:
-    {
+    case Type::BLUE_COIN: {
         auto path = get_resource(blue_coin, file_roots);
         if (path.empty())
             throw std::runtime_error("Board::resource::load_resource(): could not find blue coin image");
@@ -53,12 +53,12 @@ Board::Image Board::Resource::load_resource(NVGcontext* ctx, Board::Resource::Ty
     }
 }
 
-//test:
+// test:
 Engine::Color Board::State::get_in_a_row_same_color_of_four() const
 {
     auto [row_c, col_c] = std::make_tuple(Engine::Color::NONE, Engine::Color::NONE);
     auto adjacent_r = 0, adjacent_c = 0;
-    for (auto const& row : layout)
+    for (auto const &row : layout)
     {
         auto cols = std::begin(row);
         if ((row_c == Engine::Color::BLUE or row_c == Engine::Color::RED) and row_c == *cols)
@@ -66,7 +66,7 @@ Engine::Color Board::State::get_in_a_row_same_color_of_four() const
         else if (row_c != *cols)
             adjacent_r = 0;
         row_c = *cols;
-        //std::cout << "adjacent:" << adjacent_r << std::endl;
+        // std::cout << "adjacent:" << adjacent_r << std::endl;
         if (adjacent_r > 2)
         {
             return *cols;
@@ -87,16 +87,14 @@ Engine::Color Board::State::get_in_a_row_same_color_of_four() const
     return Engine::Color::NONE;
 }
 
-//test:
+// test:
 Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = true) const
 {
     auto color = Engine::Color::NONE;
     int ROW = 7;
     int COL = 6;
     // There will be ROW+COL-1 lines
-    for (int line = 1;
-        line <= (ROW + COL - 1);
-        line++)
+    for (int line = 1; line <= (ROW + COL - 1); line++)
     {
         /* Get column index of the first element
            in this line of output.
@@ -141,30 +139,28 @@ Engine::Color Board::State::is_won()
     return color;
 }
 
-//test:
+// test:
 bool Board::State::is_full() const
 {
     bool full = true;
-    for (auto const& k : layout)
+    for (auto const &k : layout)
     {
-        for (auto const& j : k)
+        for (auto const &j : k)
             if (j != Engine::Color::RED and j != Engine::Color::BLUE)
                 full = false;
     }
     return full;
 }
 
-
-inline std::pair<float, float> Board::get_coin_drawing_pos(float x_pos, float y_pos)
-const noexcept
+inline std::pair<float, float> Board::get_coin_drawing_pos(float x_pos, float y_pos) const noexcept
 {
     float xx = m_pos.x() + 55.f + (106.2211f * x_pos);
     float yy = m_pos.y() + m_size.y() - 107.2222f - (75.6222f * y_pos);
 
-    return { xx, yy };
+    return {xx, yy};
 }
 
-bool Board::add_coin(NVGcontext* ctx, Engine::Column col, Engine::Color color)
+bool Board::add_coin(NVGcontext *ctx, Engine::Column col, Engine::Color color)
 {
     auto location = &m_layout[engine->column_to_int(col)];
     auto test = std::ranges::find(location->begin(), location->end(), 0);
@@ -174,7 +170,8 @@ bool Board::add_coin(NVGcontext* ctx, Engine::Column col, Engine::Color color)
         if (color == Engine::Color::BLUE)
         {
             location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::BLUE_COIN);
-        } else
+        }
+        else
         {
             location->operator[](test - location->begin()) = res.load_resource(ctx, resource_type::RED_COIN);
         }
@@ -186,21 +183,19 @@ bool Board::add_coin(NVGcontext* ctx, Engine::Column col, Engine::Color color)
     return false;
 }
 
-void Board::draw_coins(NVGcontext* ctx) const
+void Board::draw_coins(NVGcontext *ctx) const
 {
     auto x_pos = 0, y_pos = 0;
-    for (auto const& column : m_layout)
+    for (auto const &column : m_layout)
     {
         y_pos = 0;
-        for (auto const& texture : column)
+        for (auto const &texture : column)
         {
             if (texture != 0)
             {
-                auto col_position = get_coin_drawing_pos(static_cast<float>(x_pos),
-                    static_cast<float>(y_pos));
+                auto col_position = get_coin_drawing_pos(static_cast<float>(x_pos), static_cast<float>(y_pos));
                 NVGpaint img_pattern =
-                    nvgImagePattern(ctx, col_position.first, col_position.second, 72.f,
-                        72.f, 0.f, texture, 1.f);
+                    nvgImagePattern(ctx, col_position.first, col_position.second, 72.f, 72.f, 0.f, texture, 1.f);
 
                 nvgFillPaint(ctx, img_pattern);
 
@@ -213,9 +208,9 @@ void Board::draw_coins(NVGcontext* ctx) const
     }
 }
 
-void Board::draw(NVGcontext* ctx)
+void Board::draw(NVGcontext *ctx)
 {
-    nanogui::Screen* scr = screen();
+    nanogui::Screen *scr = screen();
     if (scr == nullptr)
         throw std::runtime_error("Board::draw(): could not find parent screen!");
 
@@ -248,7 +243,8 @@ void Board::draw(NVGcontext* ctx)
         if (m_render_pass_resolved)
             m_render_pass_resolved->resize(fbsize);
 #endif
-    } else
+    }
+    else
     {
         m_render_pass->resize(scr->framebuffer_size());
         m_render_pass->set_viewport(offset, fbsize);
@@ -262,8 +258,7 @@ void Board::draw(NVGcontext* ctx)
     if (m_image == 0)
         throw std::runtime_error("Board::draw(): could not load game board");
 
-    NVGpaint img_pattern = nvgImagePattern(ctx, m_pos.x(), 0, m_size.x(),
-        m_size.y(), 0.f, m_image, 1.f);
+    NVGpaint img_pattern = nvgImagePattern(ctx, m_pos.x(), 0, m_size.x(), m_size.y(), 0.f, m_image, 1.f);
 
     nvgFillPaint(ctx, img_pattern);
 
@@ -277,33 +272,29 @@ void Board::draw(NVGcontext* ctx)
         add_coin(ctx, coin.second, coin.first);
         if (auto check = this->state.is_won(); check != Engine::Color::NONE)
         {
+            this->inc_ref();
             switch (check)
             {
-            case Engine::Color::RED:
-            {
-                ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
-                    nanogui::MessageDialog::Type::Information,
-                    " ",
-                    "RED player is the winner!");
+            case Engine::Color::RED: {
+                auto window = new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ",
+                                                         "RED player is the winner!");
             }
             break;
-            case Engine::Color::BLUE:
-            {
-                ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
-                    nanogui::MessageDialog::Type::Information,
-                    " ",
-                    "BLUE player is the winner!");
+            case Engine::Color::BLUE: {
+                auto window = new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ",
+                                                         "BLUE player is the winner!");
             }
             break;
+            case Engine::Color::NONE: {
+                // do nothing
+            }
             }
         }
         if (this->state.is_full())
         {
             this->inc_ref();
-            ref<nanogui::MessageDialog> window = new nanogui::MessageDialog(scr,
-                nanogui::MessageDialog::Type::Information,
-                " ",
-                "The game was a tie!");
+            ref<nanogui::MessageDialog> window =
+                new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
         }
     }
 
@@ -316,14 +307,14 @@ void Board::draw(NVGcontext* ctx)
         nvgBeginPath(ctx);
         nvgStrokeWidth(ctx, 1.f);
         nvgStrokeColor(ctx, m_border_color);
-        nvgRoundedRect(ctx, m_pos.x() + .5f, m_pos.y() + .5f, m_size.x() - 1.f,
-            m_size.y() - 1.f, m_theme->m_window_corner_radius);
+        nvgRoundedRect(ctx, m_pos.x() + .5f, m_pos.y() + .5f, m_size.x() - 1.f, m_size.y() - 1.f,
+                       m_theme->m_window_corner_radius);
         nvgStroke(ctx);
     }
 
     if (m_render_to_texture)
     {
-        nanogui::RenderPass* rp = m_render_pass;
+        nanogui::RenderPass *rp = m_render_pass;
 #if defined(NANOGUI_USE_METAL)
         if (m_render_pass_resolved)
             rp = m_render_pass_resolved;
@@ -332,4 +323,4 @@ void Board::draw(NVGcontext* ctx)
     }
 }
 
-}  // namespace linea
+} // namespace linea

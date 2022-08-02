@@ -1,19 +1,22 @@
 #pragma once
 
 #include <board.h>
-#include <nanogui/nanogui.h>
 #include <forward_list>
+#include <nanogui/nanogui.h>
 #include <string_view>
 
-namespace linea {
+namespace linea
+{
 
 class Engine
 {
-public:
-    explicit Engine() {}
-    Engine(Engine& engine) = delete;
+  public:
+    explicit Engine()
+    {
+    }
+    Engine(Engine &engine) = delete;
 
-public:
+  public:
     enum class Color : int
     {
         RED = 2,
@@ -21,18 +24,22 @@ public:
         NONE
     };
 
-    inline friend std::ostream& operator << (std::ostream& os, Color const& obj)
+    inline friend std::ostream &operator<<(std::ostream &os, Color const &obj)
     {
         auto j = static_cast<std::underlying_type<Color>::type>(obj);
         switch (j)
         {
-        case 0: os << 0;
+        case 0:
+            os << 0;
             break;
-        case 2: os << "Red";
+        case 2:
+            os << "Red";
             break;
-        case 3: os << "Blue";
+        case 3:
+            os << "Blue";
             break;
-        case 4: os << "NULL";
+        case 4:
+            os << "NULL";
         }
         return os;
     }
@@ -49,7 +56,10 @@ public:
         COL_7,
     };
 
-    constexpr bool get_is_receiving() const noexcept { return is_receiving; }
+    constexpr bool get_is_receiving() const noexcept
+    {
+        return is_receiving;
+    }
 
     constexpr std::string_view column_to_string(Column col) const noexcept
     {
@@ -103,8 +113,7 @@ public:
     inline void add_coin(Column col)
     {
         is_receiving = true;
-        action_queue.emplace_front(is_red ? Color::RED : Color::BLUE,
-            col);
+        action_queue.emplace_front(is_red ? Color::RED : Color::BLUE, col);
     }
 
     std::pair<Color, Column> pop_coin() noexcept
@@ -116,9 +125,9 @@ public:
         return coin;
     }
 
-private:
+  private:
     std::forward_list<std::pair<Color, Column>> action_queue{};
-    bool is_red{ false };
-    bool is_receiving{ false };
+    bool is_red{false};
+    bool is_receiving{false};
 };
-}  // namespace linea
+} // namespace linea
