@@ -272,7 +272,6 @@ void Board::draw(NVGcontext *ctx)
         add_coin(ctx, coin.second, coin.first);
         if (auto check = this->state.is_won(); check != Engine::Color::NONE)
         {
-            this->inc_ref();
             switch (check)
             {
             case Engine::Color::RED: {
@@ -285,15 +284,11 @@ void Board::draw(NVGcontext *ctx)
                                                          "BLUE player is the winner!");
             }
             break;
-            case Engine::Color::NONE: {
-                // do nothing
-            }
             }
         }
         if (this->state.is_full())
         {
-            this->inc_ref();
-            ref<nanogui::MessageDialog> window =
+            auto window =
                 new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
         }
     }
