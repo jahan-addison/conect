@@ -6,24 +6,27 @@
 # For many purposes, you may not need to change anything about this file.
 
 cmake_minimum_required(VERSION 3.14)
+cmake_policy(SET CMP0127 OLD)
 
 # Set project name, version and laguages here. (change as needed)
 # Version numbers are available by including "exampleConfig.h" in
 # the source. See exampleConfig.h.in for some more details.
-project(fjorir VERSION 0.0.1.0 LANGUAGES CXX)
+project(linea VERSION 0.0.1.0 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
 option(ENABLE_WARNINGS_SETTINGS "Allow target_set_warnings to add flags and defines.
                                  Set this to OFF if you want to provide your own warning parameters." ON)
+
 option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will remove all doctest related code.
-                        Tests in tests/*.cc will still be enabled." OFF)
+                        Tests in tests/*.cpp will still be enabled." ON)
 
 # Include stuff. No change needed.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(ConfigSafeGuards)
 include(Colors)
 include(CTest)
+include(Doctest)
 include(Misc)
 include(Warnings)
 
@@ -64,7 +67,7 @@ add_definitions(${NANOGUI_EXTRA_DEFS})
 include_directories(${NANOGUI_EXTRA_INCS})
 
 # There's also (probably) doctests within the library, so we need to see this as well.
-# target_link_libraries(${LIBRARY_NAME} PUBLIC doctest)
+target_link_libraries(${LIBRARY_NAME} PUBLIC doctest)
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL DISABLE Annoying)

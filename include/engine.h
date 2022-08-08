@@ -39,7 +39,7 @@ class Engine
             os << "Blue";
             break;
         case 4:
-            os << "NULL";
+            os << "None";
         }
         return os;
     }

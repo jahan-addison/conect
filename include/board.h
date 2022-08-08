@@ -49,7 +49,7 @@ class Board : public Canvas
         Engine::Color is_won();
         bool is_full() const;
 
-      private:
+      public:
         Engine::Color get_diagonal_same_color_of_four(bool start_left) const;
         Engine::Color get_in_a_row_same_color_of_four() const;
     };

@@ -4,8 +4,7 @@ namespace linea
 {
 
 GUI::GUI(bool init)
-    : Screen(Vector2i(1150, 800), "linea [GL 4.1]", true, false, true, true, false, 4, 1),
-      engine(std::make_shared<Engine>())
+    : Screen(Vector2i(1150, 800), "Linea", true, false, true, true, false, 4, 1), engine(std::make_shared<Engine>())
 
 {
     this->set_sidebar();
