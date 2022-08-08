@@ -6,9 +6,7 @@ using namespace linea;
 inline void clear_board_state_layout(Board::State &state)
 {
     state.layout.fill({linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                       linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE
-
-    });
+                       linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE});
 }
 
 TEST_CASE("Board::State::get_in_a_row_same_color_of_four")
