@@ -19,7 +19,7 @@
 
 * Install dependencies (debian/ubuntu)
 
-> `sudo apt-get install libx11-dev xorg-dev doctest doctest-dev libglu1-mesa-dev python-dev python3-dev`
+> `sudo apt-get install libx11-dev xorg-dev doctest-dev libglu1-mesa-dev python-dev python3-dev`
 
 
 ### Building
