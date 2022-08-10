@@ -1,5 +1,7 @@
 #include <gui.h>
 
+#include <string_view>
+
 namespace linea
 {
 
@@ -26,7 +28,15 @@ void GUI::set_board_actions()
     {
         Button *b = window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
         b->set_background_color(Color(255, 255, 255, 35));
-        b->set_callback([&, this, i] { this->engine->add_coin(static_cast<Engine::Column>(i)); });
+        b->set_callback([&, this, i] {
+            this->engine->add_coin(static_cast<Engine::Column>(i));
+            if (this->engine->winning_color != Engine::Color::NONE)
+            {
+                auto win_str = this->engine->winning_color == Engine::Color::RED ? "RED player is the winner!"
+                                                                                 : "BLUE player is the winner!";
+                new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, "Winner!", win_str);
+            }
+        });
     }
 }
 

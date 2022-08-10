@@ -24,6 +24,8 @@ class Engine
         NONE
     };
 
+    Color winning_color = Color::NONE;
+
     inline friend std::ostream &operator<<(std::ostream &os, Color const &obj)
     {
         auto j = static_cast<std::underlying_type<Color>::type>(obj);

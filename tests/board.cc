@@ -1,5 +1,6 @@
 #include "doctest/doctest.h"
 #include <board.h>
+#include <iostream>
 
 using namespace linea;
 

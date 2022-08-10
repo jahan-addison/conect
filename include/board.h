@@ -35,6 +35,7 @@ class Board : public Canvas
     Board(Widget *parent, std::shared_ptr<Engine> engine) : Canvas(parent, 1), engine(engine), m_image(-1)
     {
     }
+
     virtual void draw(NVGcontext *ctx) override;
 
   public:
@@ -73,7 +74,7 @@ class Board : public Canvas
 
     using resource_type = Resource::Type;
 
-  private:
+  public:
     inline std::pair<float, float> get_coin_drawing_pos(float x_pos, float y_pos) const noexcept;
     bool add_coin(NVGcontext *ctx, Engine::Column col, Engine::Color color);
     void draw_coins(NVGcontext *ctx) const;

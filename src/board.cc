@@ -1,8 +1,7 @@
 
 #include <board.h>
-#include <nanogui/messagedialog.h>
-
 #include <iostream>
+#include <nanogui/messagedialog.h>
 #include <ranges>
 
 namespace linea
@@ -53,7 +52,6 @@ Board::Image Board::Resource::load_resource(NVGcontext *ctx, Board::Resource::Ty
     }
 }
 
-// test:
 Engine::Color Board::State::get_in_a_row_same_color_of_four() const
 {
     auto [row_c, col_c] = std::make_tuple(Engine::Color::NONE, Engine::Color::NONE);
@@ -66,7 +64,6 @@ Engine::Color Board::State::get_in_a_row_same_color_of_four() const
         else if (row_c != *cols)
             adjacent_r = 0;
         row_c = *cols;
-        // std::cout << "adjacent:" << adjacent_r << std::endl;
         if (adjacent_r > 2)
         {
             return *cols;
@@ -90,38 +87,73 @@ Engine::Color Board::State::get_in_a_row_same_color_of_four() const
 // test:
 Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = true) const
 {
+    const auto size = layout.size();
+
     auto color = Engine::Color::NONE;
-    int ROW = 7;
-    int COL = 6;
-    // There will be ROW+COL-1 lines
-    for (int line = 1; line <= (ROW + COL - 1); line++)
+    auto last = Engine::Color::NONE;
+
+    auto adjacent_l = 0;
+    auto start_col = 0;
+    auto start_row = 0;
+    auto last_row = size - 1;
+    int row;
+
+    // forward diagonal search
+    if (start_left)
     {
-        /* Get column index of the first element
-           in this line of output.
-           The index is 0 for first ROW lines and
-           line - ROW for remaining lines  */
-        int start_col = std::max(0, line - ROW);
-
-        /* Get count of elements in this line. The
-           count of elements is equal to minimum of
-           line number, COL-start_col and ROW */
-        int count = std::min(std::min(line, COL - start_col), ROW);
-
-        auto last = Engine::Color::NONE;
-        int adjacent = 0;
-        for (int j = 0; j < count; j++)
+        while (start_row < size or start_col < layout.front().size())
         {
-            auto previous = last;
-            if (start_left)
-                last = layout[std::min(line, ROW) - j - 1][start_col + COL - j - 1];
+            if (start_row < size)
+                row = start_row++;
             else
-                last = layout[std::min(ROW, line) - j - 1][start_col + j];
-            if ((last == Engine::Color::RED or last == Engine::Color::BLUE) and previous == last)
-                adjacent++;
-            if (adjacent > 2)
             {
-                color = last;
-                break;
+                row = last_row;
+                start_col++;
+            }
+            last = Engine::Color::NONE;
+            adjacent_l = 0;
+            for (int col = start_col; col < layout.front().size() and row >= 0; col++)
+            {
+                if ((layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED) and
+                    last == layout[row][col])
+                    adjacent_l++;
+                if (adjacent_l > 2)
+                    return last;
+                if (layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED)
+                {
+                    last = layout[row][col];
+                }
+                row--;
+            }
+        }
+    }
+    // backward diagonal search
+    else
+    {
+        start_col = layout.back().size();
+        while (start_row < size or start_col >= 0)
+        {
+            if (start_row < size)
+                row = start_row++;
+            else
+            {
+                row = last_row;
+                start_col--;
+            }
+            last = Engine::Color::NONE;
+            adjacent_l = 0;
+            for (int col = start_col; col >= 0 and row >= 0; col--)
+            {
+                if ((layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED) and
+                    last == layout[row][col])
+                    adjacent_l++;
+                if (adjacent_l > 2)
+                    return last;
+                if (layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED)
+                {
+                    last = layout[row][col];
+                }
+                row--;
             }
         }
     }
@@ -274,23 +306,26 @@ void Board::draw(NVGcontext *ctx)
         {
             switch (check)
             {
-            case Engine::Color::RED: {
-                auto window = new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ",
-                                                         "RED player is the winner!");
-            }
-            break;
-            case Engine::Color::BLUE: {
-                auto window = new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ",
-                                                         "BLUE player is the winner!");
-            }
-            break;
+            case Engine::Color::RED:
+                this->engine->winning_color = Engine::Color::RED;
+                // new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, "Winner!",
+                //                            "RED player is the winner!");
+
+                break;
+            case Engine::Color::BLUE:
+                this->engine->winning_color = Engine::Color::RED;
+
+                // new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, "Winner!",
+                //                            "BLUE player is the winner!");
+                break;
+            default:
+                break;
             }
         }
-        if (this->state.is_full())
-        {
-            auto window =
-                new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
-        }
+        // if (this->state.is_full())
+        // {
+        //     new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
+        // }
     }
 
     draw_coins(ctx);
