@@ -84,7 +84,6 @@ Engine::Color Board::State::get_in_a_row_same_color_of_four() const
     return Engine::Color::NONE;
 }
 
-// test:
 Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = true) const
 {
     const auto size = layout.size();
@@ -245,45 +244,6 @@ void Board::draw(NVGcontext *ctx)
     nanogui::Screen *scr = screen();
     if (scr == nullptr)
         throw std::runtime_error("Board::draw(): could not find parent screen!");
-
-    float pixel_ratio = scr->pixel_ratio();
-
-    Widget::draw(ctx);
-
-    scr->nvg_flush();
-
-    Vector2i fbsize = m_size;
-    Vector2i offset = absolute_position();
-    if (m_draw_border)
-        fbsize -= 2;
-
-#if defined(NANOGUI_USE_OPENGL) || defined(NANOGUI_USE_GLES)
-    if (m_render_to_texture)
-        offset = Vector2i(offset.x(), scr->size().y() - offset.y() - m_size.y());
-#endif
-
-    if (m_draw_border)
-        offset += Vector2i(1, 1);
-
-    fbsize = Vector2i(Vector2f(fbsize) * pixel_ratio);
-    offset = Vector2i(Vector2f(offset) * pixel_ratio);
-
-    if (m_render_to_texture)
-    {
-        m_render_pass->resize(fbsize);
-#if defined(NANOGUI_USE_METAL)
-        if (m_render_pass_resolved)
-            m_render_pass_resolved->resize(fbsize);
-#endif
-    }
-    else
-    {
-        m_render_pass->resize(scr->framebuffer_size());
-        m_render_pass->set_viewport(offset, fbsize);
-    }
-
-    m_render_pass->begin();
-
     if (m_image == -1)
         m_image = res.load_resource(ctx, resource_type::BOARD);
 
@@ -298,59 +258,7 @@ void Board::draw(NVGcontext *ctx)
     nvgRect(ctx, m_pos.x(), m_pos.y(), m_size.x(), m_size.y());
     nvgFill(ctx);
 
-    if (this->engine->get_is_receiving())
-    {
-        auto coin = this->engine->pop_coin();
-        add_coin(ctx, coin.second, coin.first);
-        if (auto check = this->state.is_won(); check != Engine::Color::NONE)
-        {
-            switch (check)
-            {
-            case Engine::Color::RED:
-                this->engine->winning_color = Engine::Color::RED;
-                // new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, "Winner!",
-                //                            "RED player is the winner!");
-
-                break;
-            case Engine::Color::BLUE:
-                this->engine->winning_color = Engine::Color::RED;
-
-                // new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, "Winner!",
-                //                            "BLUE player is the winner!");
-                break;
-            default:
-                break;
-            }
-        }
-        // if (this->state.is_full())
-        // {
-        //     new nanogui::MessageDialog(scr, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
-        // }
-    }
-
     draw_coins(ctx);
-
-    m_render_pass->end();
-
-    if (m_draw_border)
-    {
-        nvgBeginPath(ctx);
-        nvgStrokeWidth(ctx, 1.f);
-        nvgStrokeColor(ctx, m_border_color);
-        nvgRoundedRect(ctx, m_pos.x() + .5f, m_pos.y() + .5f, m_size.x() - 1.f, m_size.y() - 1.f,
-                       m_theme->m_window_corner_radius);
-        nvgStroke(ctx);
-    }
-
-    if (m_render_to_texture)
-    {
-        nanogui::RenderPass *rp = m_render_pass;
-#if defined(NANOGUI_USE_METAL)
-        if (m_render_pass_resolved)
-            rp = m_render_pass_resolved;
-#endif
-        rp->blit_to(Vector2i(0, 0), fbsize, scr, offset);
-    }
 }
 
 } // namespace linea

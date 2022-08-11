@@ -28,16 +28,40 @@ void GUI::set_board_actions()
     {
         Button *b = window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
         b->set_background_color(Color(255, 255, 255, 35));
-        b->set_callback([&, this, i] {
-            this->engine->add_coin(static_cast<Engine::Column>(i));
-            if (this->engine->winning_color != Engine::Color::NONE)
-            {
-                auto win_str = this->engine->winning_color == Engine::Color::RED ? "RED player is the winner!"
-                                                                                 : "BLUE player is the winner!";
-                new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, "Winner!", win_str);
-            }
-        });
+        b->set_callback([&, this, i] { this->on_coin_event(i); });
     }
+}
+
+void GUI::on_coin_event(int index)
+{
+    this->canvas->add_coin(this->nvg_context(), static_cast<Engine::Column>(index), this->engine->get_next_color());
+    if (auto check = this->canvas->state.is_won(); check != Engine::Color::NONE)
+    {
+        if (this->engine->winning_color == Engine::Color::NONE)
+        {
+            switch (check)
+            {
+            case Engine::Color::RED:
+                this->engine->winning_color = Engine::Color::RED;
+                break;
+            case Engine::Color::BLUE:
+                this->engine->winning_color = Engine::Color::BLUE;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    if (this->engine->winning_color != Engine::Color::NONE)
+    {
+        auto win_str = this->engine->winning_color == Engine::Color::RED ? "RED player is the winner!"
+                                                                         : "BLUE player is the winner!";
+        new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, "Winner!", win_str);
+    }
+    if (this->canvas->state.is_full())
+        new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
+
+    this->engine->set_next_color();
 }
 
 void GUI::set_sidebar()

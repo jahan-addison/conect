@@ -112,6 +112,16 @@ class Engine
         }
     }
 
+    constexpr void set_next_color()
+    {
+        is_red = !is_red;
+    }
+
+    constexpr Color get_next_color()
+    {
+        return is_red ? Color::RED : Color::BLUE;
+    }
+
     inline void add_coin(Column col)
     {
         is_receiving = true;

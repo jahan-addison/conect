@@ -75,12 +75,12 @@ class Board : public Canvas
     using resource_type = Resource::Type;
 
   public:
+    State state{};
     inline std::pair<float, float> get_coin_drawing_pos(float x_pos, float y_pos) const noexcept;
     bool add_coin(NVGcontext *ctx, Engine::Column col, Engine::Color color);
     void draw_coins(NVGcontext *ctx) const;
 
   private:
-    State state{};
     Image m_image{};
     Resource res{};
     std::array<std::array<Image, 6>, 7> m_layout{};

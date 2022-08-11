@@ -29,6 +29,7 @@ class GUI : public Screen
     std::shared_ptr<Board> canvas;
 
     void set_board_actions();
+    void on_coin_event(int index);
     void set_sidebar();
     void set_board();
     difficulty default_difficulty = difficulty::Beginner;
