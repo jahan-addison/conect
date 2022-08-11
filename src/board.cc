@@ -86,21 +86,23 @@ Engine::Color Board::State::get_in_a_row_same_color_of_four() const
 
 Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = true) const
 {
-    const auto size = layout.size();
+    const int size = layout.size();
+    const int row_size = layout.front().size();
 
     auto color = Engine::Color::NONE;
     auto last = Engine::Color::NONE;
 
-    auto adjacent_l = 0;
-    auto start_col = 0;
-    auto start_row = 0;
-    auto last_row = size - 1;
+    int adjacent_l = 0;
+    int start_col = 0;
+    int start_row = 0;
+    int last_row = size - 1;
+
     int row;
 
     // forward diagonal search
     if (start_left)
     {
-        while (start_row < size or start_col < layout.front().size())
+        while (start_row < size or start_col < row_size)
         {
             if (start_row < size)
                 row = start_row++;
@@ -111,17 +113,19 @@ Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = tr
             }
             last = Engine::Color::NONE;
             adjacent_l = 0;
-            for (int col = start_col; col < layout.front().size() and row >= 0; col++)
+            for (int col = start_col; col < row_size and row >= 0; col++)
             {
                 if ((layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED) and
                     last == layout[row][col])
                     adjacent_l++;
+                else
+                    adjacent_l = 0;
                 if (adjacent_l > 2)
                     return last;
                 if (layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED)
-                {
                     last = layout[row][col];
-                }
+                else
+                    last = Engine::Color::NONE;
                 row--;
             }
         }
@@ -146,12 +150,14 @@ Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = tr
                 if ((layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED) and
                     last == layout[row][col])
                     adjacent_l++;
+                else
+                    adjacent_l = 0;
                 if (adjacent_l > 2)
                     return last;
                 if (layout[row][col] == Engine::Color::BLUE or layout[row][col] == Engine::Color::RED)
-                {
                     last = layout[row][col];
-                }
+                else
+                    last = Engine::Color::NONE;
                 row--;
             }
         }
@@ -170,7 +176,6 @@ Engine::Color Board::State::is_won()
     return color;
 }
 
-// test:
 bool Board::State::is_full() const
 {
     bool full = true;

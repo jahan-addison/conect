@@ -28,6 +28,7 @@ void GUI::set_board_actions()
     {
         Button *b = window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
         b->set_background_color(Color(255, 255, 255, 35));
+
         b->set_callback([&, this, i] { this->on_coin_event(i); });
     }
 }
