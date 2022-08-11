@@ -2,7 +2,7 @@
 
 > Connect-four, five, and fun variations with AI and network multiplayer support 🎲
 
-![img](./resources/screenshot-2.png)
+![img](./resources/screenshot.png)
 
 ## Features
 
