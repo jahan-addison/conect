@@ -132,17 +132,12 @@ TEST_CASE("Board::State::is_full")
 {
 
     Board::State state{};
-    bool test{true};
 
-    test = state.is_full();
-
-    CHECK(test == false);
+    CHECK(state.is_full() == false);
 
     fill_board_state_layout(state);
 
-    test = state.is_full();
-
-    CHECK(test == true);
+    CHECK(state.is_full() == true);
 
     clear_board_state_layout(state);
 }
