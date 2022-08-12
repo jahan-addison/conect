@@ -166,7 +166,7 @@ Engine::Color Board::State::get_diagonal_same_color_of_four(bool start_left = tr
     return color;
 }
 
-Engine::Color Board::State::is_won()
+Engine::Color Board::State::is_won() const
 {
     auto color = this->get_diagonal_same_color_of_four();
     if (color == Engine::Color::NONE)

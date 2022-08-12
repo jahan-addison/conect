@@ -47,10 +47,11 @@ class Board : public Canvas
         std::array<std::array<Engine::Color, 6>, 7> layout{};
         State() = default;
         State(State &state) = delete;
-        Engine::Color is_won();
+
         bool is_full() const;
 
       public:
+        Engine::Color is_won() const;
         Engine::Color get_diagonal_same_color_of_four(bool start_left) const;
         Engine::Color get_in_a_row_same_color_of_four() const;
     };
