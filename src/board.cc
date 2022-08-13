@@ -196,6 +196,24 @@ inline std::pair<float, float> Board::get_coin_drawing_pos(float x_pos, float y_
     return {xx, yy};
 }
 
+void Board::clear_board(NVGcontext *ctx)
+{
+    this->state.layout.fill({Engine::Color::NONE, Engine::Color::NONE, Engine::Color::NONE, Engine::Color::NONE,
+                             Engine::Color::NONE, Engine::Color::NONE});
+
+    for (auto &column : m_layout)
+    {
+        for (auto &texture : column)
+        {
+            if (texture != 0)
+            {
+                nvgDeleteImage(ctx, texture);
+                texture = 0;
+            }
+        }
+    }
+}
+
 bool Board::add_coin(NVGcontext *ctx, Engine::Column col, Engine::Color color)
 {
     auto location = &m_layout[engine->column_to_int(col)];

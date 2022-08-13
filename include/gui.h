@@ -21,7 +21,7 @@ enum class difficulty : int
 class GUI : public Screen
 {
   public:
-    explicit GUI(bool init = true);
+    explicit GUI();
     GUI(GUI &gui) = delete;
 
   private:

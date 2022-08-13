@@ -5,7 +5,7 @@
 namespace linea
 {
 
-GUI::GUI(bool init)
+GUI::GUI()
     : Screen(Vector2i(1150, 800), "Linea", true, false, true, true, false, 4, 1), engine(std::make_shared<Engine>())
 
 {
@@ -73,7 +73,11 @@ void GUI::set_sidebar()
     std::string player_1 = "Anonymous";
     std::string player_2 = "AI";
     gui->add_group("Options");
-    gui->add_button("Reset", []() { std::cout << "Game reset!" << std::endl; });
+    gui->add_button("Reset", [&, this] {
+        this->engine->winning_color = Engine::Color::NONE;
+        this->canvas->clear_board(this->nvg_context());
+        this->canvas->draw_coins(this->nvg_context());
+    });
     gui->add_button("Invite...", []() { std::cout << "Invite your friend!" << std::endl; });
     gui->add_group("Who's Playing");
 
