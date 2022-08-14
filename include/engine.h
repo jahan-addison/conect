@@ -24,8 +24,6 @@ class Engine
         NONE
     };
 
-    Color winning_color = Color::NONE;
-
     inline friend std::ostream &operator<<(std::ostream &os, Color const &obj)
     {
         auto j = static_cast<std::underlying_type<Color>::type>(obj);
@@ -110,16 +108,6 @@ class Engine
         default:
             return 0;
         }
-    }
-
-    constexpr void set_next_color()
-    {
-        is_red = !is_red;
-    }
-
-    constexpr Color get_next_color()
-    {
-        return is_red ? Color::RED : Color::BLUE;
     }
 
     inline void add_coin(Column col)

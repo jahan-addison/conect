@@ -1,7 +1,5 @@
 #include <gui.h>
 
-#include <string_view>
-
 namespace linea
 {
 
@@ -9,6 +7,7 @@ GUI::GUI()
     : Screen(Vector2i(1150, 800), "Linea", true, false, true, true, false, 4, 1), engine(std::make_shared<Engine>())
 
 {
+    this->set_players();
     this->set_sidebar();
     this->set_board();
     this->set_board_actions();
@@ -33,36 +32,44 @@ void GUI::set_board_actions()
     }
 }
 
+void GUI::set_next_player()
+{
+    if (*current_player_turn == player_1)
+        current_player_turn = &player_2;
+    else
+        current_player_turn = &player_1;
+}
+
 void GUI::on_coin_event(int index)
 {
-    this->canvas->add_coin(this->nvg_context(), static_cast<Engine::Column>(index), this->engine->get_next_color());
+    this->canvas->add_coin(this->nvg_context(), static_cast<Engine::Column>(index), current_player_turn->color);
     if (auto check = this->canvas->state.is_won(); check != Engine::Color::NONE)
     {
-        if (this->engine->winning_color == Engine::Color::NONE)
+        if (!winner.has_value())
         {
-            switch (check)
-            {
-            case Engine::Color::RED:
-                this->engine->winning_color = Engine::Color::RED;
-                break;
-            case Engine::Color::BLUE:
-                this->engine->winning_color = Engine::Color::BLUE;
-                break;
-            default:
-                break;
-            }
+            if (player_1 == check)
+                winner.emplace(player_1);
+            else
+                winner.emplace(player_2);
         }
     }
-    if (this->engine->winning_color != Engine::Color::NONE)
-    {
-        auto win_str = this->engine->winning_color == Engine::Color::RED ? "RED player is the winner!"
-                                                                         : "BLUE player is the winner!";
-        new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, "Winner!", win_str);
-    }
+    if (winner.has_value())
+        new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, "Winner!",
+                                   winner->name + " is the winner!");
+
     if (this->canvas->state.is_full())
         new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
 
-    this->engine->set_next_color();
+    set_next_player();
+}
+
+void GUI::set_players()
+{
+
+    player_1.color = Engine::Color::BLUE;
+    player_2.name = "AI";
+    player_2.color = Engine::Color::RED;
+    player_2.ai = true;
 }
 
 void GUI::set_sidebar()
@@ -70,21 +77,22 @@ void GUI::set_sidebar()
     this->inc_ref();
     FormHelper *gui = new FormHelper(this);
     ref<Window> window = gui->add_window(Vector2i(50, 50), "Let's Play!");
-    std::string player_1 = "Anonymous";
-    std::string player_2 = "AI";
+
     gui->add_group("Options");
     gui->add_button("Reset", [&, this] {
-        this->engine->winning_color = Engine::Color::NONE;
+        this->winner = std::nullopt;
         this->canvas->clear_board(this->nvg_context());
         this->canvas->draw_coins(this->nvg_context());
     });
     gui->add_button("Invite...", []() { std::cout << "Invite your friend!" << std::endl; });
-    gui->add_group("Who's Playing");
+    gui->add_group("Who's Playing?");
 
-    gui->add_variable("Player 1", player_1)->set_placeholder("(type your name here)");
-    gui->add_variable("Player 2", player_2);
+    gui->add_variable<std::string>(
+        "Player 1", [&](std::string value) { player_1.name = value; }, [&]() { return player_1.name; });
 
-    gui->add_variable("Difficulty", this->default_difficulty, true)->set_items({"Beginner", "Hard", "Insane"});
+    gui->add_variable("Player 2", player_2.name, false);
+
+    gui->add_variable("Difficulty", this->default_difficulty, true)->set_items({"Beginner", "Hard"});
 }
 
 void GUI::set_board()
