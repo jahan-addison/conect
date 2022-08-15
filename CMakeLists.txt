@@ -37,9 +37,11 @@ include(Warnings)
 set(SOURCES          # All .cc files in src/
     src/gui.cc
     src/board.cc
+    src/engine.cc
 )
 set(TESTFILES        # All .cc files in tests/
     tests/main.cc
+    tests/board.cc
 )
 set(LIBRARY_NAME linea)  # Default name for the library built from src/*.cc (change if you wish)
 

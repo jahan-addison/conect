@@ -13,12 +13,6 @@ namespace linea
 
 using namespace nanogui;
 
-enum class difficulty : int
-{
-    Beginner,
-    Hard
-};
-
 class GUI : public Screen
 {
   public:
@@ -64,8 +58,6 @@ class GUI : public Screen
     void on_coin_event(int index);
     void set_sidebar();
     void set_board();
-
-    difficulty default_difficulty = difficulty::Beginner;
 };
 
 } // namespace linea

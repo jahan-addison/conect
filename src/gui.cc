@@ -43,6 +43,7 @@ void GUI::set_next_player()
 void GUI::on_coin_event(int index)
 {
     this->canvas->add_coin(this->nvg_context(), static_cast<Engine::Column>(index), current_player_turn->color);
+
     if (auto check = this->canvas->state.is_won(); check != Engine::Color::NONE)
     {
         if (!winner.has_value())
@@ -65,8 +66,8 @@ void GUI::on_coin_event(int index)
 
 void GUI::set_players()
 {
-
     player_1.color = Engine::Color::BLUE;
+
     player_2.name = "AI";
     player_2.color = Engine::Color::RED;
     player_2.ai = true;
@@ -81,10 +82,14 @@ void GUI::set_sidebar()
     gui->add_group("Options");
     gui->add_button("Reset", [&, this] {
         this->winner = std::nullopt;
+        this->engine->clear_coins();
         this->canvas->clear_board(this->nvg_context());
         this->canvas->draw_coins(this->nvg_context());
     });
+
+    // @TODO networking
     gui->add_button("Invite...", []() { std::cout << "Invite your friend!" << std::endl; });
+
     gui->add_group("Who's Playing?");
 
     gui->add_variable<std::string>(
@@ -92,7 +97,10 @@ void GUI::set_sidebar()
 
     gui->add_variable("Player 2", player_2.name, false);
 
-    gui->add_variable("Difficulty", this->default_difficulty, true)->set_items({"Beginner", "Hard"});
+    gui->add_variable<Engine::Difficulty>(
+           "Difficulty", [&](Engine::Difficulty d) { this->engine->set_current_difficulty(d); },
+           [&]() { return this->engine->get_current_difficulty(); })
+        ->set_items({"Beginner", "Hard"});
 }
 
 void GUI::set_board()

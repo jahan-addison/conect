@@ -4,6 +4,7 @@
 #include <forward_list>
 #include <nanogui/nanogui.h>
 #include <string_view>
+#include <utility>
 
 namespace linea
 {
@@ -23,6 +24,26 @@ class Engine
         BLUE,
         NONE
     };
+
+    enum class Difficulty
+    {
+        Beginner,
+        Hard
+    };
+
+    enum class Column : int
+    {
+        COL_E = 0,
+        COL_1,
+        COL_2,
+        COL_3,
+        COL_4,
+        COL_5,
+        COL_6,
+        COL_7,
+    };
+
+    using Color_Column = std::pair<Color, Column>;
 
     inline friend std::ostream &operator<<(std::ostream &os, Color const &obj)
     {
@@ -44,24 +65,14 @@ class Engine
         return os;
     }
 
-    enum class Column : int
-    {
-        COL_E = 0,
-        COL_1,
-        COL_2,
-        COL_3,
-        COL_4,
-        COL_5,
-        COL_6,
-        COL_7,
-    };
+  public:
+    void clear_coins() noexcept;
+    void add_coin(Column col, Color color) noexcept;
+    Color_Column get_next_coin_color_column_by_algorithm(Difficulty d) const noexcept;
+    Color_Column beginner_decision_algorithm() noexcept;
+    Color_Column hard_decision_algorithm() noexcept;
 
-    constexpr bool get_is_receiving() const noexcept
-    {
-        return is_receiving;
-    }
-
-    constexpr std::string_view column_to_string(Column col) const noexcept
+    constexpr std::string_view column_to_string(Column col) noexcept
     {
         switch (col)
         {
@@ -87,7 +98,7 @@ class Engine
         }
     }
 
-    constexpr int column_to_int(Column col) const noexcept
+    constexpr int column_to_int(Column col) noexcept
     {
         switch (col)
         {
@@ -110,24 +121,18 @@ class Engine
         }
     }
 
-    inline void add_coin(Column col)
+    constexpr void set_current_difficulty(Difficulty d) noexcept
     {
-        is_receiving = true;
-        action_queue.emplace_front(is_red ? Color::RED : Color::BLUE, col);
+        algorithm_difficulty = d;
     }
 
-    std::pair<Color, Column> pop_coin() noexcept
+    constexpr Difficulty get_current_difficulty() noexcept
     {
-        auto coin = action_queue.front();
-        action_queue.pop_front();
-        is_receiving = false;
-        is_red = !is_red;
-        return coin;
+        return algorithm_difficulty;
     }
 
   private:
-    std::forward_list<std::pair<Color, Column>> action_queue{};
-    bool is_red{false};
-    bool is_receiving{false};
+    std::forward_list<Color_Column> action_queue{};
+    Difficulty algorithm_difficulty = Difficulty::Beginner;
 };
 } // namespace linea
