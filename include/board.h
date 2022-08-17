@@ -22,6 +22,8 @@
 namespace linea
 {
 
+using namespace engine;
+
 using nanogui::Canvas;
 using nanogui::ref;
 using nanogui::Vector2f;

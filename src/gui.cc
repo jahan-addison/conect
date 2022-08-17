@@ -59,7 +59,7 @@ void GUI::on_coin_event(int index)
                                    winner->name + " is the winner!");
 
     if (this->canvas->state.is_full())
-        new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, " ", "The game was a tie!");
+        new nanogui::MessageDialog(this, nanogui::MessageDialog::Type::Information, " ", "The game is a draw!");
 
     set_next_player();
 }

@@ -3,18 +3,15 @@
 
 namespace linea
 {
+namespace engine
+{
 
-Engine::Color_Column Engine::get_next_coin_color_column_by_algorithm(Engine::Difficulty d) const noexcept
+Color_Column Engine::beginner_decision_algorithm() noexcept
 {
     return {Color::NONE, Column::COL_1};
 }
 
-Engine::Color_Column Engine::beginner_decision_algorithm() noexcept
-{
-    return {Color::NONE, Column::COL_1};
-}
-
-Engine::Color_Column Engine::hard_decision_algorithm() noexcept
+Color_Column Engine::hard_decision_algorithm() noexcept
 {
     return {Color::NONE, Column::COL_1};
 }
@@ -28,5 +25,7 @@ void Engine::clear_coins() noexcept
 {
     action_queue.clear();
 }
+
+} // namespace engine
 
 } // namespace linea
