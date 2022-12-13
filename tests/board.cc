@@ -1,18 +1,28 @@
 #include "doctest/doctest.h"
 #include <board.h>
 
-using namespace linea;
+using namespace orianna;
 
-inline void clear_board_state_layout(Board::State &state)
+inline void
+clear_board_state_layout(Board::State& state)
 {
-    state.layout.fill({linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                       linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE});
+    state.layout.fill({ orianna::Engine::Color::NONE,
+                        orianna::Engine::Color::NONE,
+                        orianna::Engine::Color::NONE,
+                        orianna::Engine::Color::NONE,
+                        orianna::Engine::Color::NONE,
+                        orianna::Engine::Color::NONE });
 }
 
-inline void fill_board_state_layout(Board::State &state)
+inline void
+fill_board_state_layout(Board::State& state)
 {
-    state.layout.fill({linea::Engine::Color::RED, linea::Engine::Color::RED, linea::Engine::Color::RED,
-                       linea::Engine::Color::RED, linea::Engine::Color::RED, linea::Engine::Color::RED});
+    state.layout.fill({ orianna::Engine::Color::RED,
+                        orianna::Engine::Color::RED,
+                        orianna::Engine::Color::RED,
+                        orianna::Engine::Color::RED,
+                        orianna::Engine::Color::RED,
+                        orianna::Engine::Color::RED });
 }
 
 TEST_CASE("Board::State::get_in_a_row_same_color_of_four")
@@ -109,20 +119,48 @@ TEST_CASE("Board::State::is_won")
 
     // 4 in a diagonal row test
 
-    state.layout = {{{linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::BLUE, linea::Engine::Color::BLUE, linea::Engine::Color::BLUE,
-                      linea::Engine::Color::RED, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::BLUE, linea::Engine::Color::BLUE, linea::Engine::Color::RED,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::BLUE, linea::Engine::Color::RED, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::RED, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE}}};
+    state.layout = { { { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE } } };
 
     CHECK(state.is_won() == Engine::Color::RED);
 }
@@ -161,20 +199,48 @@ TEST_CASE("Board::State::get_in_a_row_same_color_of_four")
     // [0, 2, 1, 1, 0, 0, 0]
     // [2, 1, 1, 1, 0, 0, 0]
 
-    state.layout = {{{linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::BLUE, linea::Engine::Color::BLUE, linea::Engine::Color::BLUE,
-                      linea::Engine::Color::RED, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::BLUE, linea::Engine::Color::BLUE, linea::Engine::Color::RED,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::BLUE, linea::Engine::Color::RED, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::RED, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE}}};
+    state.layout = { { { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::RED,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE } } };
 
     test = state.get_diagonal_same_color_of_four(true);
 
@@ -191,20 +257,48 @@ TEST_CASE("Board::State::get_in_a_row_same_color_of_four")
 
     test = Engine::Color::NONE;
 
-    state.layout = {{{linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::RED,
-                      linea::Engine::Color::BLUE, linea::Engine::Color::BLUE, linea::Engine::Color::BLUE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::RED, linea::Engine::Color::BLUE, linea::Engine::Color::BLUE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::RED, linea::Engine::Color::BLUE},
-                     {linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::NONE,
-                      linea::Engine::Color::NONE, linea::Engine::Color::NONE, linea::Engine::Color::RED}}};
+    state.layout = { { { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::BLUE,
+                         orianna::Engine::Color::BLUE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::RED,
+                         orianna::Engine::Color::BLUE },
+                       { orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::NONE,
+                         orianna::Engine::Color::RED } } };
 
     test = state.get_diagonal_same_color_of_four(false);
 

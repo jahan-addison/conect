@@ -1,4 +1,4 @@
-# línea
+# Orianna
 
 > Connect-four, five, and fun variations with AI and network multiplayer support 🎲
 
@@ -36,5 +36,8 @@ Example:
 > make test      # Makes and runs the tests.
 ```
 
+**Note**: Copy the root `resources` folder to the directory of the built binary
 
-## Tests
+---
+
+![img](https://cdn.vox-cdn.com/thumbor/j-iyo0MUGZMWtbr3RxBOuSwq8DY=/0x0:1200x674/920x0/filters:focal(0x0:1200x674):format(webp):no_upscale()/cdn.vox-cdn.com/uploads/chorus_asset/file/13264983/DpZaNreW4AAkjwO.jpg)

@@ -11,7 +11,7 @@ cmake_policy(SET CMP0127 OLD)
 # Set project name, version and laguages here. (change as needed)
 # Version numbers are available by including "exampleConfig.h" in
 # the source. See exampleConfig.h.in for some more details.
-project(linea VERSION 0.0.1.0 LANGUAGES CXX)
+project(orianna VERSION 0.0.1.0 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
@@ -43,7 +43,7 @@ set(TESTFILES        # All .cc files in tests/
     tests/main.cc
     tests/board.cc
 )
-set(LIBRARY_NAME linea)  # Default name for the library built from src/*.cc (change if you wish)
+set(LIBRARY_NAME orianna)  # Default name for the library built from src/*.cc (change if you wish)
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)

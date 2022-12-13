@@ -1,16 +1,16 @@
 #include <gui.h>
-#include <nanogui/nanogui.h>
 #include <iostream>
+#include <nanogui/nanogui.h>
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
-    try
-    {
+    try {
         nanogui::init();
 
         /* scoped variables */
         {
-            nanogui::ref<linea::GUI> app = new linea::GUI();
+            nanogui::ref<orianna::GUI> app = new orianna::GUI();
             app->dec_ref();
             app->draw_all();
             app->set_visible(true);
@@ -18,18 +18,16 @@ int main(int argc, char** argv)
         }
 
         nanogui::shutdown();
-    } catch (const std::exception& e)
-    {
+    } catch (const std::exception& e) {
         std::string error_msg =
-            std::string("Caught a fatal error: ") + std::string(e.what());
+          std::string("Caught a fatal error: ") + std::string(e.what());
 #if defined(_WIN32)
         MessageBoxA(nullptr, error_msg.c_str(), NULL, MB_ICONERROR | MB_OK);
 #else
         std::cerr << error_msg << std::endl;
 #endif
         return -1;
-    } catch (...)
-    {
+    } catch (...) {
         std::cerr << "Caught an unknown error!" << std::endl;
     }
 }

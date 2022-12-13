@@ -19,8 +19,7 @@
 #include <windows.h>
 #endif
 
-namespace linea
-{
+namespace orianna {
 
 using namespace engine;
 
@@ -34,10 +33,13 @@ constexpr float Pi = 3.14159f;
 class Board : public Canvas
 {
   public:
-    Board(Widget *parent, std::shared_ptr<Engine> engine) : Canvas(parent, 1), engine(engine), m_image(-1)
+    Board(Widget* parent, std::shared_ptr<Engine> engine)
+      : Canvas(parent, 1)
+      , engine(engine)
+      , m_image(-1)
     {
     }
-    virtual void draw(NVGcontext *ctx) override;
+    virtual void draw(NVGcontext* ctx) override;
 
   public:
     std::shared_ptr<Engine> engine;
@@ -47,7 +49,7 @@ class Board : public Canvas
     {
         std::array<std::array<Engine::Color, 6>, 7> layout{};
         State() = default;
-        State(State &state) = delete;
+        State(State& state) = delete;
 
         bool is_full() const;
 
@@ -66,22 +68,27 @@ class Board : public Canvas
             BLUE_COIN
         };
 
-        std::array<std::string_view, 2> const file_roots = {"../../../resources/", "./resources/"};
-        std::string_view const board = "linea-board-2.png";
+        std::array<std::string_view, 2> const file_roots = {
+            "../../../resources/",
+            "./resources/"
+        };
+        std::string_view const board = "orianna-board-2.png";
         std::string_view const red_coin = "circle-red.png";
         std::string_view const blue_coin = "circle-blue.png";
 
-        Board::Image load_resource(NVGcontext *ctx, Type type) const;
+        Board::Image load_resource(NVGcontext* ctx, Type type) const;
     };
 
     using resource_type = Resource::Type;
 
   public:
     State state{};
-    inline std::pair<float, float> get_coin_drawing_pos(float x_pos, float y_pos) const noexcept;
-    void clear_board(NVGcontext *ctx);
-    bool add_coin(NVGcontext *ctx, Engine::Column col, Engine::Color color);
-    void draw_coins(NVGcontext *ctx) const;
+    inline std::pair<float, float> get_coin_drawing_pos(
+      float x_pos,
+      float y_pos) const noexcept;
+    void clear_board(NVGcontext* ctx);
+    bool add_coin(NVGcontext* ctx, Engine::Column col, Engine::Color color);
+    void draw_coins(NVGcontext* ctx) const;
 
   private:
     Image m_image{};
@@ -89,4 +96,4 @@ class Board : public Canvas
     std::array<std::array<Image, 6>, 7> m_layout{};
 };
 
-} // namespace linea
+} // namespace orianna

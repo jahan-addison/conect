@@ -1,16 +1,15 @@
 #pragma once
 
 #include <board.h>
+
 #include <forward_list>
 #include <ostream>
 #include <string_view>
 #include <utility>
 
-namespace linea
-{
+namespace orianna {
 
-namespace engine
-{
+namespace engine {
 
 enum class Coin_Color : int
 {
@@ -42,7 +41,8 @@ using Color_Column = std::pair<Coin_Color, Coin_Column>;
 class Algorithm
 {
   public:
-    virtual Color_Column get_next_coin_color_and_column(Engine_Difficulty d) = 0;
+    virtual Color_Column get_next_coin_color_and_column(
+      Engine_Difficulty d) = 0;
 
   private:
     virtual Color_Column next_coin_decision_as_beginner_ai() = 0;
@@ -52,10 +52,8 @@ class Algorithm
 class Engine
 {
   public:
-    explicit Engine()
-    {
-    }
-    Engine(Engine &engine) = delete;
+    explicit Engine() {}
+    Engine(Engine& engine) = delete;
 
   public:
     using Color = Coin_Color;
@@ -63,23 +61,22 @@ class Engine
     using Column = Coin_Column;
 
   public:
-    inline friend std::ostream &operator<<(std::ostream &os, Color const &obj)
+    inline friend std::ostream& operator<<(std::ostream& os, Color const& obj)
     {
         auto j = static_cast<std::underlying_type<Color>::type>(obj);
-        switch (j)
-        {
-        case 0:
-            os << 0;
-            break;
+        switch (j) {
+            case 0:
+                os << 0;
+                break;
 
-        case 2:
-            os << "Red";
-            break;
-        case 3:
-            os << "Blue";
-            break;
-        case 4:
-            os << "None";
+            case 2:
+                os << "Red";
+                break;
+            case 3:
+                os << "Blue";
+                break;
+            case 4:
+                os << "None";
         }
         return os;
     }
@@ -92,50 +89,48 @@ class Engine
 
     constexpr std::string_view column_to_string(Column col) noexcept
     {
-        switch (col)
-        {
-        case Column::COL_E:
-            return "none";
-        case Column::COL_1:
-            return "column 1";
-        case Column::COL_2:
-            return "column 2";
-        case Column::COL_3:
-            return "column 3";
-        case Column::COL_4:
-            return "column 4";
-        case Column::COL_5:
-            return "column 5";
-        case Column::COL_6:
-            return "column 6";
-        case Column::COL_7:
-            return "column 7";
+        switch (col) {
+            case Column::COL_E:
+                return "none";
+            case Column::COL_1:
+                return "column 1";
+            case Column::COL_2:
+                return "column 2";
+            case Column::COL_3:
+                return "column 3";
+            case Column::COL_4:
+                return "column 4";
+            case Column::COL_5:
+                return "column 5";
+            case Column::COL_6:
+                return "column 6";
+            case Column::COL_7:
+                return "column 7";
 
-        default:
-            return "unknown column";
+            default:
+                return "unknown column";
         }
     }
 
     constexpr int column_to_int(Column col) noexcept
     {
-        switch (col)
-        {
-        case Column::COL_1:
-            return 0;
-        case Column::COL_2:
-            return 1;
-        case Column::COL_3:
-            return 2;
-        case Column::COL_4:
-            return 3;
-        case Column::COL_5:
-            return 4;
-        case Column::COL_6:
-            return 5;
-        case Column::COL_7:
-            return 6;
-        default:
-            return 0;
+        switch (col) {
+            case Column::COL_1:
+                return 0;
+            case Column::COL_2:
+                return 1;
+            case Column::COL_3:
+                return 2;
+            case Column::COL_4:
+                return 3;
+            case Column::COL_5:
+                return 4;
+            case Column::COL_6:
+                return 5;
+            case Column::COL_7:
+                return 6;
+            default:
+                return 0;
         }
     }
 
@@ -156,4 +151,4 @@ class Engine
 
 } // namespace engine
 
-} // namespace linea
+} // namespace orianna

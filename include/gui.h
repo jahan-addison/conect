@@ -8,8 +8,7 @@
 #include <optional>
 #include <string>
 
-namespace linea
-{
+namespace orianna {
 
 using namespace nanogui;
 
@@ -17,26 +16,26 @@ class GUI : public Screen
 {
   public:
     explicit GUI();
-    GUI(GUI &gui) = delete;
+    GUI(GUI& gui) = delete;
 
   private:
     struct Player
     {
-        std::string name{"Anonymous"};
-        Engine::Color color{Engine::Color::NONE};
-        bool ai{false};
+        std::string name{ "Anonymous" };
+        Engine::Color color{ Engine::Color::NONE };
+        bool ai{ false };
 
-        friend inline bool operator==(Player const &l, Player const &r)
+        friend inline bool operator==(Player const& l, Player const& r)
         {
             return &l == &r;
         }
 
-        friend inline bool operator==(Player const &l, Engine::Color const &r)
+        friend inline bool operator==(Player const& l, Engine::Color const& r)
         {
             return l.color == r;
         }
 
-        friend inline bool operator!=(auto const &l, auto const &r)
+        friend inline bool operator!=(auto const& l, auto const& r)
         {
             return !(l == r);
         }
@@ -50,7 +49,7 @@ class GUI : public Screen
     Player player_1{};
     Player player_2{};
 
-    Player *current_player_turn = &player_1;
+    Player* current_player_turn = &player_1;
 
     void set_players();
     void set_next_player();
@@ -60,4 +59,4 @@ class GUI : public Screen
     void set_board();
 };
 
-} // namespace linea
+} // namespace orianna
