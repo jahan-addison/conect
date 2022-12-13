@@ -13,6 +13,8 @@
 
 **Note**: You will need at least gcc/g++10, python3.4, and cmake 3.14.
 
+The project also works in the latest Visual Studio (with C++20 support).
+
 * Install submodules
 
 > `git submodule update --init --recursive`
