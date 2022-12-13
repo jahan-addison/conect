@@ -1,4 +1,4 @@
-# Orianna
+# orianna
 
 > Connect-four, five, and fun variations with AI and network multiplayer support 🎲
 
