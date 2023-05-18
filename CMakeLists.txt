@@ -1,12 +1,6 @@
-# This file specifies how the project should be built, using CMake.
-# If you are unfamiliar with CMake, don't worry about all the details.
-# The sections you might want to edit are marked as such, and
-# the comments should hopefully make most of it clear.
-#
-# For many purposes, you may not need to change anything about this file.
 
 cmake_minimum_required(VERSION 3.14)
-cmake_policy(SET CMP0127 OLD)
+# cmake_policy(SET CMP0127 OLD)
 
 # Set project name, version and laguages here. (change as needed)
 # Version numbers are available by including "exampleConfig.h" in

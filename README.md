@@ -11,17 +11,23 @@
 
 ## Development
 
-**Note**: You will need at least gcc/g++10, python3.4, and cmake 3.14.
+Requirements: gcc/g++10, python3.4, and cmake 3.14.
 
-The project also works in the latest Visual Studio (with C++20 support).
-
-* Install submodules
-
-> `git submodule update --init --recursive`
+This project works in the latest Visual Studio preview (with C++20 support).
 
 * Install dependencies (debian/ubuntu)
 
 > `sudo apt-get install libx11-dev xorg-dev doctest-dev libglu1-mesa-dev python-dev python3-dev`
+
+* Install dependencies (windows, mingw/msys UCTR64)
+
+> `pacman -Sy base-devel python3 mingw-w64-x86_64-doctest mingw-w64-x86_64-mesa mingw-w64-ucrt-x86_64-cmake`
+
+Note that in mingw, the default cmake generator is `ninja`. Replace the `make` commands below in the build section with just `ninja`
+
+* Install git submodules
+
+> `git submodule update --init --recursive`
 
 
 ### Building
