@@ -1,13 +1,29 @@
-#include <gui.h>
+/*
+    conect is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-namespace orianna {
+    conect is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with conect.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+#include <gui.h>
+#include <iostream>
+#include <memory>
+
+namespace conect {
 
 GUI::GUI()
-  : Screen(Vector2i(1150, 800), "Orianna", true, false, true, true, false, 4, 1)
+  : Screen(Vector2i(1150, 800), "conect", true, false, true, true, false, 4, 1)
   , engine(std::make_shared<Engine>())
 
 {
-    this->set_players();
     this->set_sidebar();
     this->set_board();
     this->set_board_actions();
@@ -35,53 +51,29 @@ GUI::set_board_actions()
 }
 
 void
-GUI::set_next_player()
-{
-    if (*current_player_turn == player_1)
-        current_player_turn = &player_2;
-    else
-        current_player_turn = &player_1;
-}
-
-void
 GUI::on_coin_event(int index)
 {
     this->canvas->add_coin(this->nvg_context(),
-                           static_cast<Engine::Column>(index),
-                           current_player_turn->color);
+                           static_cast<resource::Column>(index),
+                           engine->get_current_player().color);
 
-    if (auto check = this->canvas->state.is_won();
-        check != Engine::Color::NONE) {
-        if (!winner.has_value()) {
-            if (player_1 == check)
-                winner.emplace(player_1);
-            else
-                winner.emplace(player_2);
-        }
-    }
-    if (winner.has_value())
+    auto winning_state = this->engine->is_won();
+
+    if (winning_state.has_value())
         new nanogui::MessageDialog(this,
                                    nanogui::MessageDialog::Type::Information,
                                    "Winner!",
-                                   winner->name + " is the winner!");
+                                   this->engine->get_current_player().name +
+                                     " is the winner!");
 
-    if (this->canvas->state.is_full())
+    if (this->engine->is_full(this->canvas->layout))
         new nanogui::MessageDialog(this,
                                    nanogui::MessageDialog::Type::Information,
                                    " ",
                                    "The game is a draw!");
 
-    set_next_player();
-}
-
-void
-GUI::set_players()
-{
-    player_1.color = Engine::Color::BLUE;
-
-    player_2.name = "AI";
-    player_2.color = Engine::Color::RED;
-    player_2.ai = true;
+    if (!winning_state.has_value())
+        engine->set_next_player();
 }
 
 void
@@ -93,8 +85,6 @@ GUI::set_sidebar()
 
     gui->add_group("Options");
     gui->add_button("Reset", [&, this] {
-        this->winner = std::nullopt;
-        this->engine->clear_coins();
         this->canvas->clear_board(this->nvg_context());
         this->canvas->draw_coins(this->nvg_context());
     });
@@ -107,15 +97,24 @@ GUI::set_sidebar()
 
     gui->add_variable<std::string>(
       "Player 1",
-      [&](std::string value) { player_1.name = value; },
-      [&]() { return player_1.name; });
+      [&](std::string value) {
+          auto player = this->engine->get_player(Engine::Players::First);
+          this->engine->set_player_name(player, value);
+      },
+      [&]() { return this->engine->get_player(Engine::Players::First).name; });
 
-    gui->add_variable("Player 2", player_2.name, false);
+    gui->add_variable<std::string>(
+      "Player 2",
+      [&](std::string value) {
+          auto player = this->engine->get_player(Engine::Players::Second);
+          this->engine->set_player_name(player, value);
+      },
+      [&]() { return this->engine->get_player(Engine::Players::Second).name; });
 
     gui
-      ->add_variable<Engine::Difficulty>(
+      ->add_variable<AI::Difficulty>(
         "Difficulty",
-        [&](Engine::Difficulty d) { this->engine->set_current_difficulty(d); },
+        [&](AI::Difficulty d) { this->engine->set_current_difficulty(d); },
         [&]() { return this->engine->get_current_difficulty(); })
       ->set_items({ "Beginner", "Hard" });
 }
@@ -130,8 +129,6 @@ GUI::set_board()
     canvas = std::make_shared<Board>(window, engine);
     canvas->set_background_color({ 100, 100, 100, 255 });
     canvas->set_fixed_size({ 820, 520 });
-
-    perform_layout();
 }
 
-} // namespace orianna
+} // namespace conect

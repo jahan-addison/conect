@@ -1,3 +1,18 @@
+/*
+    conect is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    conect is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with conect.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #pragma once
 
 #include <board.h>
@@ -8,55 +23,23 @@
 #include <optional>
 #include <string>
 
-namespace orianna {
+namespace conect {
 
 using namespace nanogui;
 
 class GUI : public Screen
 {
   public:
-    explicit GUI();
+    GUI();
     GUI(GUI& gui) = delete;
-
-  private:
-    struct Player
-    {
-        std::string name{ "Anonymous" };
-        Engine::Color color{ Engine::Color::NONE };
-        bool ai{ false };
-
-        friend inline bool operator==(Player const& l, Player const& r)
-        {
-            return &l == &r;
-        }
-
-        friend inline bool operator==(Player const& l, Engine::Color const& r)
-        {
-            return l.color == r;
-        }
-
-        friend inline bool operator!=(auto const& l, auto const& r)
-        {
-            return !(l == r);
-        }
-    };
 
   private:
     std::shared_ptr<Engine> engine;
     std::shared_ptr<Board> canvas;
-    std::optional<Player> winner;
-
-    Player player_1{};
-    Player player_2{};
-
-    Player* current_player_turn = &player_1;
-
-    void set_players();
-    void set_next_player();
     void set_board_actions();
     void on_coin_event(int index);
     void set_sidebar();
     void set_board();
 };
 
-} // namespace orianna
+} // namespace conect

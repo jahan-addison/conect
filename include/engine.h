@@ -1,154 +1,96 @@
+/*
+    conect is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    conect is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with conect.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #pragma once
 
+#include <ai.h>
 #include <board.h>
-
-#include <forward_list>
-#include <ostream>
+#include <optional>
+#include <resource.h>
+#include <string>
 #include <string_view>
 #include <utility>
 
-namespace orianna {
-
-namespace engine {
-
-enum class Coin_Color : int
-{
-    RED = 2,
-    BLUE,
-    NONE
-};
-
-enum class Engine_Difficulty : int
-{
-    Beginner = 0,
-    Hard
-};
-
-enum class Coin_Column : int
-{
-    COL_E = 0,
-    COL_1,
-    COL_2,
-    COL_3,
-    COL_4,
-    COL_5,
-    COL_6,
-    COL_7,
-};
-
-using Color_Column = std::pair<Coin_Color, Coin_Column>;
-
-class Algorithm
-{
-  public:
-    virtual Color_Column get_next_coin_color_and_column(
-      Engine_Difficulty d) = 0;
-
-  private:
-    virtual Color_Column next_coin_decision_as_beginner_ai() = 0;
-    virtual Color_Column next_coin_decision_as_hard_ai() = 0;
-};
+namespace conect {
 
 class Engine
 {
   public:
-    explicit Engine() {}
     Engine(Engine& engine) = delete;
+    Engine(AI::Difficulty d = AI::Difficulty::Beginner)
+      : difficulty(d)
+    {
+    }
+
+    enum class Players
+    {
+        First,
+        Second
+    };
+
+  private:
+    struct Player
+    {
+        Player() = delete;
+        explicit Player(std::string name_, resource::Color color_, bool ai_)
+          : name(std::move(name_))
+          , color(color_)
+          , ai(ai_)
+        {
+        }
+        std::string name;
+        resource::Color color;
+        bool ai;
+
+        friend inline bool operator==(Player const& l, Player const& r)
+        {
+            return &l == &r;
+        }
+
+        friend inline bool operator==(Player const& l, resource::Color const& r)
+        {
+            return l.color == r;
+        }
+
+        friend inline bool operator!=(auto const& l, auto const& r)
+        {
+            return !(l == r);
+        }
+    };
 
   public:
-    using Color = Coin_Color;
-    using Difficulty = Engine_Difficulty;
-    using Column = Coin_Column;
+    constexpr void set_current_difficulty(AI::Difficulty d) { difficulty = d; }
 
-  public:
-    inline friend std::ostream& operator<<(std::ostream& os, Color const& obj)
+    constexpr AI::Difficulty get_current_difficulty() { return difficulty; }
+
+    void set_next_player();
+    Player get_player(Players player) const;
+    bool is_full(resource::Layout layout) const;
+    std::optional<Players> is_won() const;
+
+    inline Player get_current_player() const { return *player; }
+    inline void set_player_name(Player& player, std::string& name)
     {
-        auto j = static_cast<std::underlying_type<Color>::type>(obj);
-        switch (j) {
-            case 0:
-                os << 0;
-                break;
-
-            case 2:
-                os << "Red";
-                break;
-            case 3:
-                os << "Blue";
-                break;
-            case 4:
-                os << "None";
-        }
-        return os;
-    }
-
-  public:
-    void clear_coins() noexcept;
-    void add_coin(Column col, Color color) noexcept;
-    Color_Column beginner_decision_algorithm() noexcept;
-    Color_Column hard_decision_algorithm() noexcept;
-
-    constexpr std::string_view column_to_string(Column col) noexcept
-    {
-        switch (col) {
-            case Column::COL_E:
-                return "none";
-            case Column::COL_1:
-                return "column 1";
-            case Column::COL_2:
-                return "column 2";
-            case Column::COL_3:
-                return "column 3";
-            case Column::COL_4:
-                return "column 4";
-            case Column::COL_5:
-                return "column 5";
-            case Column::COL_6:
-                return "column 6";
-            case Column::COL_7:
-                return "column 7";
-
-            default:
-                return "unknown column";
-        }
-    }
-
-    constexpr int column_to_int(Column col) noexcept
-    {
-        switch (col) {
-            case Column::COL_1:
-                return 0;
-            case Column::COL_2:
-                return 1;
-            case Column::COL_3:
-                return 2;
-            case Column::COL_4:
-                return 3;
-            case Column::COL_5:
-                return 4;
-            case Column::COL_6:
-                return 5;
-            case Column::COL_7:
-                return 6;
-            default:
-                return 0;
-        }
-    }
-
-    constexpr void set_current_difficulty(Difficulty d) noexcept
-    {
-        algorithm_difficulty = d;
-    }
-
-    constexpr Difficulty get_current_difficulty() noexcept
-    {
-        return algorithm_difficulty;
+        player.name = std::move(name);
     }
 
   private:
-    std::forward_list<Color_Column> action_queue{};
-    Difficulty algorithm_difficulty = Difficulty::Beginner;
+    Player player_1{ "Anonymous", resource::Color::RED, false };
+    Player player_2{ "AI", resource::Color::BLUE, true };
+    Player* player = &player_1;
+    AI::Difficulty difficulty;
 };
 
-} // namespace engine
-
-} // namespace orianna
+} // namespace conect

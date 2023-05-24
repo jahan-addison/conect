@@ -1,11 +1,24 @@
 
+# conect is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# conect is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with conect.  If not, see <https://www.gnu.org/licenses/>.
+
+
 cmake_minimum_required(VERSION 3.14)
 # cmake_policy(SET CMP0127 OLD)
 
 # Set project name, version and laguages here. (change as needed)
-# Version numbers are available by including "exampleConfig.h" in
-# the source. See exampleConfig.h.in for some more details.
-project(orianna VERSION 0.0.1.0 LANGUAGES CXX)
+# the source. See config.h.in for some more details.
+project(conect VERSION 0.0.1.0 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
@@ -15,7 +28,6 @@ option(ENABLE_WARNINGS_SETTINGS "Allow target_set_warnings to add flags and defi
 option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will remove all doctest related code.
                         Tests in tests/*.cpp will still be enabled." ON)
 
-# Include stuff. No change needed.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(ConfigSafeGuards)
 include(Colors)
@@ -24,20 +36,19 @@ include(Doctest)
 include(Misc)
 include(Warnings)
 
-
 # --------------------------------------------------------------------------------
 #                         Locate files (change as needed).
 # --------------------------------------------------------------------------------
 set(SOURCES          # All .cc files in src/
     src/gui.cc
-    src/board.cc
     src/engine.cc
+    src/board.cc
 )
 set(TESTFILES        # All .cc files in tests/
     tests/main.cc
     tests/board.cc
 )
-set(LIBRARY_NAME orianna)  # Default name for the library built from src/*.cc (change if you wish)
+set(LIBRARY_NAME conect)  # Default name for the library built from src/*.cc (change if you wish)
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
@@ -49,7 +60,6 @@ add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 
 # Lib needs its header files, and users of the library must also see these (PUBLIC). (No change needed)
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/engine)
 
 # NANOGUI
 add_subdirectory(external/nanogui)
