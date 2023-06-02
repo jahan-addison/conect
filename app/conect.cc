@@ -18,7 +18,7 @@
 #include <nanogui/nanogui.h>
 
 int
-main(int argc, char** argv)
+main()
 {
     try {
         nanogui::init();

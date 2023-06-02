@@ -14,6 +14,7 @@
 */
 
 #include <board.h>
+#include <error.h>
 #include <filesystem>
 #include <iostream>
 #include <nanogui/messagedialog.h>
@@ -96,30 +97,36 @@ Board::load_resource(NVGcontext* ctx, resource::Resource_Type type)
         case resource::Resource_Type::BOARD: {
             fs::path path = get_resource(resource::board_resource);
             if (path.empty())
-                throw std::runtime_error(
-                  "Board::resource::load_resource(): could not find game board "
+                error_exit_program_dialog(
+                  this->parent(),
+                  "Board::resource::load_resource(): could not load game board "
                   "image");
+
             return nvgCreateImage(ctx, path.string().c_str(), 0);
         }
         case resource::Resource_Type::RED_COIN: {
             auto path = get_resource(resource::red_coin_resource);
             if (path.empty())
-                throw std::runtime_error("Board::resource::load_resource(): "
-                                         "could not find red coin image");
+                error_exit_program_dialog(this->parent(),
+                                          "Board::resource::load_resource(): "
+                                          "could not load red coin image");
             return nvgCreateImage(ctx, path.string().c_str(), 0);
         }
         case resource::Resource_Type::BLUE_COIN: {
             auto path = get_resource(resource::blue_coin_resource);
             if (path.empty())
-                throw std::runtime_error("Board::resource::load_resource(): "
-                                         "could not find blue coin image");
+                error_exit_program_dialog(this->parent(),
+                                          "Board::resource::load_resource(): "
+                                          "could not load blue coin image");
             return nvgCreateImage(ctx, path.string().c_str(), 0);
         }
 
         default:
-            throw std::runtime_error(
+            error_exit_program_dialog(
+              this->parent(),
               "Board::resource::load_resource(): invalid resource");
     }
+    return 0;
 }
 
 // Board::Color
@@ -279,8 +286,8 @@ Board::add_coin(NVGcontext* ctx, resource::Column col, resource::Color color)
               load_resource(ctx, resource::Resource_Type::RED_COIN);
         }
         if (location->operator[](test - location->begin()) == 0)
-            throw std::runtime_error(
-              "Board::add_coin(): could not load coin texture");
+            error_exit_program_dialog(
+              this->parent(), "Board::add_coin(): could not load coin texture");
 
         return true;
     }
@@ -323,13 +330,14 @@ Board::draw(NVGcontext* ctx)
 {
     nanogui::Screen* scr = screen();
     if (scr == nullptr)
-        throw std::runtime_error(
-          "Board::draw(): could not find parent screen!");
+        error_exit_program_dialog(
+          this->parent(), "Board::draw(): could not find parent screen!");
     if (board == -1)
         board = load_resource(ctx, resource::Resource_Type::BOARD);
 
     if (board == 0)
-        throw std::runtime_error("Board::draw(): could not load game board");
+        error_exit_program_dialog(
+          this->parent(), "Board::draw(): could not load game board image");
 
     NVGpaint img_pattern = nvgImagePattern(
       ctx, m_pos.x(), 0, m_size.x(), m_size.y(), 0.f, board, 1.f);
