@@ -16,7 +16,7 @@
 cmake_minimum_required(VERSION 3.14)
 # cmake_policy(SET CMP0127 OLD)
 
-# Set project name, version and laguages here. (change as needed)
+# Set project name, version and laguages her
 # the source. See config.h.in for some more details.
 project(conect VERSION 0.0.1.0 LANGUAGES CXX)
 
@@ -36,19 +36,16 @@ include(Doctest)
 include(Misc)
 include(Warnings)
 
-# --------------------------------------------------------------------------------
-#                         Locate files (change as needed).
-# --------------------------------------------------------------------------------
 set(SOURCES          # All .cc files in src/
-    src/gui.cc
-    src/engine.cc
-    src/board.cc
+    conect/gui.cc
+    conect/engine.cc
+    conect/board.cc
 )
 set(TESTFILES        # All .cc files in tests/
     tests/main.cc
     tests/board.cc
 )
-set(LIBRARY_NAME conect)  # Default name for the library built from src/*.cc (change if you wish)
+set(LIBRARY_NAME conect)
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
@@ -58,8 +55,8 @@ set(LIBRARY_NAME conect)  # Default name for the library built from src/*.cc (ch
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 
 
-# Lib needs its header files, and users of the library must also see these (PUBLIC). (No change needed)
-target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
+# Lib needs its header files, and users of the library must also see these (PUBLIC).
+target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/conect)
 
 # NANOGUI
 add_subdirectory(external/nanogui)
@@ -71,7 +68,7 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC nanogui)
 add_definitions(${NANOGUI_EXTRA_DEFS})
 
 # On top of adding the path to nanogui/include, you may need extras
-include_directories(${NANOGUI_EXTRA_INCS})
+# include_directories(${NANOGUI_EXTRA_INCS})
 
 # There's also (probably) doctests within the library, so we need to see this as well.
 target_link_libraries(${LIBRARY_NAME} PUBLIC doctest)
@@ -80,9 +77,9 @@ target_link_libraries(${LIBRARY_NAME} PUBLIC doctest)
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL DISABLE Annoying)
 # target_compile_options(${LIBRARY_NAME} ... )  # For setting manually.
 
-# Add an executable for the file app/main.cc.
+# Add an executable for the file app/conect.cc.
 # If you add more executables, copy these lines accordingly.
-add_executable(main app/main.cc)   # Name of exec. and location of file.
+add_executable(main app/conect.cc)   # Name of exec. and location of file.
 target_link_libraries(main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
 target_set_warnings(main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).
 
