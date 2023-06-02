@@ -1,17 +1,4 @@
-
-# conect is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# conect is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with conect.  If not, see <https://www.gnu.org/licenses/>.
-
+# conect is free software under GPL v3 -- see LICENSE for details.
 
 cmake_minimum_required(VERSION 3.14)
 # cmake_policy(SET CMP0127 OLD)
@@ -70,16 +57,16 @@ add_definitions(${NANOGUI_EXTRA_DEFS})
 # On top of adding the path to nanogui/include, you may need extras
 # include_directories(${NANOGUI_EXTRA_INCS})
 
-# There's also (probably) doctests within the library, so we need to see this as well.
+# There's also doctests within the library, so we need to see this as well.
 target_link_libraries(${LIBRARY_NAME} PUBLIC doctest)
 
 # Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL DISABLE Annoying)
 # target_compile_options(${LIBRARY_NAME} ... )  # For setting manually.
 
-# Add an executable for the file app/conect.cc.
+# Add executable
 # If you add more executables, copy these lines accordingly.
-add_executable(main app/conect.cc)   # Name of exec. and location of file.
+add_executable(main conect/conect.cc)   # Name of exec. and location of file.
 target_link_libraries(main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
 target_set_warnings(main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).
 
