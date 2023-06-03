@@ -8,7 +8,7 @@
 #include <iostream>
 #include <nanogui/messagedialog.h>
 #include <ranges>
-#include <resource.h>
+#include <common.h>
 
 namespace conect {
 

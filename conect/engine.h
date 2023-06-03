@@ -7,7 +7,7 @@
 #include <ai.h>
 #include <board.h>
 #include <optional>
-#include <resource.h>
+#include <common.h>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -67,7 +67,7 @@ class Engine
     void set_next_player();
     Player* get_player(Players p);
     bool is_full(resource::Layout layout) const;
-    std::optional<Players> is_won() const;
+    std::optional<Player> is_won() const;
 
     inline Player* get_current_player() const { return player; }
     inline void set_player_name(Player* p, std::string& name)

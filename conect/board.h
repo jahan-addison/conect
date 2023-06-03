@@ -11,7 +11,7 @@
 #include <nanogui/renderpass.h>
 #include <nanogui/screen.h>
 #include <ostream>
-#include <resource.h>
+#include <common.h>
 #include <string_view>
 #include <utility>
 

@@ -28,7 +28,7 @@ Engine::get_player(Players p)
     }
 }
 
-std::optional<Engine::Players>
+std::optional<Engine::Player>
 Engine::is_won() const
 {
     // auto color = this->get_diagonal_same_color_of_four();

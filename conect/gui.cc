@@ -47,15 +47,13 @@ GUI::on_coin_event(int index)
                            static_cast<resource::Column>(index),
                            engine->get_current_player()->color);
 
-    auto winning_state = this->engine->is_won();
+    auto winning_player = this->engine->is_won();
 
-    if (winning_state.has_value())
-        new nanogui::MessageDialog(
-          this,
-          nanogui::MessageDialog::Type::Information,
-          "Winner!",
-          this->engine->get_player(Engine::Players::First)->name +
-            " is the winner!");
+    if (winning_player.has_value())
+        new nanogui::MessageDialog(this,
+                                   nanogui::MessageDialog::Type::Information,
+                                   "Winner!",
+                                   winning_player->name + " is the winner!");
 
     if (this->engine->is_full(this->canvas->layout))
         new nanogui::MessageDialog(this,
@@ -63,7 +61,7 @@ GUI::on_coin_event(int index)
                                    " ",
                                    "The game is a draw!");
 
-    if (!winning_state.has_value())
+    if (!winning_player.has_value())
         engine->set_next_player();
 }
 

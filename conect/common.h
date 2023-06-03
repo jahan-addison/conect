@@ -11,18 +11,19 @@ namespace conect {
 
 namespace resource {
 
+using Image = int;
+
+enum Size : size_t
+{
+    ROW = 6,
+    COL = 7
+};
+
 enum class Color : int
 {
     RED = 2,
     BLUE,
     NONE
-};
-
-enum class Resource_Type
-{
-    BOARD = 0,
-    RED_COIN,
-    BLUE_COIN
 };
 
 enum class Column : int
@@ -39,13 +40,13 @@ enum class Column : int
 
 using Piece = std::pair<Color, Column>;
 
-enum Size : size_t
+enum class Resource_Type
 {
-    ROW = 6,
-    COL = 7
+    BOARD = 0,
+    RED_COIN,
+    BLUE_COIN
 };
 
-using Image = int;
 using Layout = std::array<std::array<Color, Size::ROW>, Size::COL>;
 using Resource_Layout = std::array<std::array<Image, Size::ROW>, Size::COL>;
 
