@@ -2,7 +2,7 @@
 
 > Connect-four, five, and fun variations with AI and network multiplayer support 🎲
 
-![img](./resources/screenshot.png)
+![img](./resources/conect-mac.png)
 
 ## Features
 
