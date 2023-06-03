@@ -15,16 +15,16 @@ Engine::set_next_player()
         player = &player_1;
 }
 
-Engine::Player
-Engine::get_player(Players player) const
+Engine::Player*
+Engine::get_player(Players p)
 {
-    switch (player) {
+    switch (p) {
         case Engine::Players::First:
-            return player_1;
+            return &player_1;
         case Engine::Players::Second:
-            return player_2;
+            return &player_2;
         default:
-            return player_1;
+            return &player_1;
     }
 }
 

@@ -65,14 +65,14 @@ class Engine
     constexpr AI::Difficulty get_current_difficulty() { return difficulty; }
 
     void set_next_player();
-    Player get_player(Players player) const;
+    Player* get_player(Players p);
     bool is_full(resource::Layout layout) const;
     std::optional<Players> is_won() const;
 
-    inline Player get_current_player() const { return *player; }
-    inline void set_player_name(Player& player, std::string& name)
+    inline Player* get_current_player() const { return player; }
+    inline void set_player_name(Player* p, std::string& name)
     {
-        player.name = std::move(name);
+        p->name = std::move(name);
     }
 
   private:

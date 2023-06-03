@@ -5,6 +5,7 @@
 #include <gui.h>
 #include <iostream>
 #include <memory>
+#include <string>
 
 namespace conect {
 
@@ -44,16 +45,17 @@ GUI::on_coin_event(int index)
 {
     this->canvas->add_coin(this->nvg_context(),
                            static_cast<resource::Column>(index),
-                           engine->get_current_player().color);
+                           engine->get_current_player()->color);
 
     auto winning_state = this->engine->is_won();
 
     if (winning_state.has_value())
-        new nanogui::MessageDialog(this,
-                                   nanogui::MessageDialog::Type::Information,
-                                   "Winner!",
-                                   this->engine->get_current_player().name +
-                                     " is the winner!");
+        new nanogui::MessageDialog(
+          this,
+          nanogui::MessageDialog::Type::Information,
+          "Winner!",
+          this->engine->get_player(Engine::Players::First)->name +
+            " is the winner!");
 
     if (this->engine->is_full(this->canvas->layout))
         new nanogui::MessageDialog(this,
@@ -90,7 +92,7 @@ GUI::set_sidebar()
           auto player = this->engine->get_player(Engine::Players::First);
           this->engine->set_player_name(player, value);
       },
-      [&]() { return this->engine->get_player(Engine::Players::First).name; });
+      [&]() { return this->engine->get_player(Engine::Players::First)->name; });
 
     gui->add_variable<std::string>(
       "Player 2",
@@ -98,7 +100,9 @@ GUI::set_sidebar()
           auto player = this->engine->get_player(Engine::Players::Second);
           this->engine->set_player_name(player, value);
       },
-      [&]() { return this->engine->get_player(Engine::Players::Second).name; });
+      [&]() {
+          return this->engine->get_player(Engine::Players::Second)->name;
+      });
 
     gui
       ->add_variable<AI::Difficulty>(
@@ -119,5 +123,4 @@ GUI::set_board()
     canvas->set_background_color({ 100, 100, 100, 255 });
     canvas->set_fixed_size({ 820, 520 });
 }
-
 } // namespace conect
