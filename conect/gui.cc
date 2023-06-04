@@ -44,7 +44,7 @@ void
 GUI::on_coin_event(int index)
 {
     this->canvas->add_coin(this->nvg_context(),
-                           static_cast<resource::Column>(index),
+                           static_cast<gui::Column>(index),
                            engine->get_current_player()->color);
 
     auto winning_player = this->engine->is_won();

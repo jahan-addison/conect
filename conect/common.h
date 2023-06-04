@@ -9,7 +9,7 @@
 
 namespace conect {
 
-namespace resource {
+namespace gui {
 
 using Image = int;
 
@@ -55,6 +55,6 @@ constexpr std::string_view board_resource = "conect-board-2.png";
 constexpr std::string_view red_coin_resource = "circle-red.png";
 constexpr std::string_view blue_coin_resource = "circle-blue.png";
 
-} // namespace resource
+} // namespace gui
 
 } // namespace conect

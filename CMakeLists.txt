@@ -13,7 +13,7 @@ option(ENABLE_WARNINGS_SETTINGS "Allow target_set_warnings to add flags and defi
                                  Set this to OFF if you want to provide your own warning parameters." ON)
 
 option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will remove all doctest related code.
-                        Tests in tests/*.cpp will still be enabled." ON)
+                        Tests in test/*.cc will still be enabled." ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(ConfigSafeGuards)
@@ -23,20 +23,18 @@ include(Doctest)
 include(Misc)
 include(Warnings)
 
-set(SOURCES          # All .cc files in src/
+set(SOURCES          # All .cc files in project
     conect/gui.cc
     conect/engine.cc
     conect/board.cc
+    conect/ai/stratzilla.cc
 )
-set(TESTFILES        # All .cc files in tests/
-    tests/main.cc
-    tests/board.cc
+set(TESTFILES        # All .cc files in test/
+    test/main.cc
+    test/board.cc
 )
 set(LIBRARY_NAME conect)
 
-# --------------------------------------------------------------------------------
-#                            Build! (Change as needed)
-# --------------------------------------------------------------------------------
 # Compile all sources into a library.
 
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
@@ -79,5 +77,5 @@ set_target_properties(
         CXX_EXTENSIONS NO
 )
 
-# Set up tests (see tests/CMakeLists.txt).
-add_subdirectory(tests)
+# Set up tests
+add_subdirectory(test)

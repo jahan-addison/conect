@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <common.h>
 #include <engine.h>
 #include <memory>
 #include <nanogui/canvas.h>
@@ -11,7 +12,6 @@
 #include <nanogui/renderpass.h>
 #include <nanogui/screen.h>
 #include <ostream>
-#include <common.h>
 #include <string_view>
 #include <utility>
 
@@ -38,20 +38,19 @@ class Board : public Canvas
       , engine(engine)
     {
     }
-    virtual void draw(NVGcontext* ctx) override;
+    void draw(NVGcontext* ctx) override;
 
   public:
-    resource::Image load_resource(NVGcontext* ctx,
-                                  resource::Resource_Type type);
+    gui::Image load_resource(NVGcontext* ctx, gui::Resource_Type type);
 
   private:
-    constexpr std::string_view column_to_string(resource::Column col);
-    constexpr int column_to_int(resource::Column col);
+    constexpr std::string_view column_to_string(gui::Column col);
+    constexpr int column_to_int(gui::Column col);
 
     inline friend std::ostream& operator<<(std::ostream& os,
-                                           resource::Color const& obj)
+                                           gui::Color const& obj)
     {
-        auto j = static_cast<std::underlying_type<resource::Color>::type>(obj);
+        auto j = static_cast<std::underlying_type<gui::Color>::type>(obj);
         switch (j) {
             case 0:
                 os << 0;
@@ -70,17 +69,17 @@ class Board : public Canvas
     }
 
   public:
-    resource::Resource_Layout i_layout{};
-    resource::Image board{ -1 };
+    gui::Resource_Layout i_layout{};
+    gui::Image board{ -1 };
     inline std::pair<float, float> get_coin_drawing_pos(
       float x_pos,
       float y_pos) const noexcept;
     void clear_board(NVGcontext* ctx);
-    bool add_coin(NVGcontext* ctx, resource::Column col, resource::Color color);
+    bool add_coin(NVGcontext* ctx, gui::Column col, gui::Color color);
     void draw_coins(NVGcontext* ctx) const;
 
   public:
-    resource::Layout layout{};
+    gui::Layout layout{};
     std::shared_ptr<Engine> engine;
 };
 
