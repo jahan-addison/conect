@@ -47,27 +47,6 @@ class Board : public Canvas
     constexpr std::string_view column_to_string(gui::Column col);
     constexpr int column_to_int(gui::Column col);
 
-    inline friend std::ostream& operator<<(std::ostream& os,
-                                           gui::Color const& obj)
-    {
-        auto j = static_cast<std::underlying_type<gui::Color>::type>(obj);
-        switch (j) {
-            case 0:
-                os << 0;
-                break;
-
-            case 2:
-                os << "Red";
-                break;
-            case 3:
-                os << "Blue";
-                break;
-            case 4:
-                os << "None";
-        }
-        return os;
-    }
-
   public:
     gui::Resource_Layout i_layout{};
     gui::Image board{ -1 };

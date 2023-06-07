@@ -61,7 +61,8 @@ class Engine
 
   public:
     constexpr void set_current_difficulty(AI::Difficulty d) { difficulty = d; }
-
+    constexpr void increment_turn_count() { turns_++; }
+    constexpr int get_turn_count() { return turns_; }
     constexpr AI::Difficulty get_current_difficulty() { return difficulty; }
 
     void set_next_player();
@@ -78,8 +79,9 @@ class Engine
   private:
     Player player_1{ "Anonymous", gui::Color::RED, false };
     Player player_2{ "AI", gui::Color::BLUE, true };
+    int turns_{ 0 };
     Player* player = &player_1;
-    AI::Difficulty difficulty;
+    AI::Difficulty difficulty{};
 };
 
 } // namespace conect

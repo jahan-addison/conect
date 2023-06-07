@@ -31,6 +31,7 @@ set(SOURCES          # All .cc files in project
 )
 set(TESTFILES        # All .cc files in test/
     test/main.cc
+    test/ai/stratzilla.cc
     test/board.cc
 )
 set(LIBRARY_NAME conect)

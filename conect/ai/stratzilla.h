@@ -13,14 +13,15 @@ namespace conect {
 
 namespace AI {
 
-using std::max;
-using std::min;
+class Stratzilla_Algorithm;
+
+using ST = Stratzilla_Algorithm;
 
 class Stratzilla_Algorithm final : public IAlgorithm
 {
   public:
-    Stratzilla_Algorithm(std::shared_ptr<Engine> engine,
-                         std::shared_ptr<gui::Layout> board)
+    explicit Stratzilla_Algorithm(std::shared_ptr<Engine> engine,
+                                  std::shared_ptr<gui::Layout> board)
       : engine_(engine)
       , board_(board)
     {
@@ -35,23 +36,24 @@ class Stratzilla_Algorithm final : public IAlgorithm
 
     gui::Piece get_next_move_as_beginner_ai() const override;
     gui::Piece get_next_move_as_advanced_ai() const override;
-    gui::Piece get_next_move_is_winning() const override;
+    bool get_next_move_is_winning(gui::Color) const override;
 
-  private:
-    score tabulate_score() override;
-    score tabulate_score_diagonal() override;
-    score tabulate_score_horizontal() override;
-    score tabulate_score_vertical() override;
+    //  private:
+    score tabulate_score(gui::Color c) override;
 
-  private:
-    move minimax_alpha_beta_pruning(unsigned int depth, int alpha, int beta);
+    //  private:
+    move minimax_alpha_beta_pruning(gui::Layout* board,
+                                    int depth,
+                                    int alpha,
+                                    int beta,
+                                    gui::Color color);
     score heuristic_function(points good, points bad, points empty);
     // score get_score_of_set(std::array<int, gui::Size::ROW> set,
     //                        gui::Color color);
-    score get_score_of_set(std::array<gui::Color, gui::Size::COL> set,
+    score get_score_of_set(std::vector<gui::Color> const& set,
                            gui::Color color);
 
-  private:
+    //  private:
     std::shared_ptr<Engine> engine_;
     std::shared_ptr<gui::Layout> board_;
 };

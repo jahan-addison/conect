@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.14)
 set(TESTFILES        # All .cc files in tests/
     main.cc
     board.cc
+    ai/stratzilla.cc
 )
 
 set(TEST_MAIN unit_tests)   # Default name for test executable (change if you wish).
