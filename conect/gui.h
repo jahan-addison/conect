@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <ai.h>
 #include <board.h>
 #include <engine.h>
 #include <iostream>
@@ -26,7 +27,11 @@ class GUI : public Screen
     std::shared_ptr<Engine> engine;
     std::shared_ptr<Board> canvas;
     void set_board_actions();
-    void on_coin_event(int index);
+
+    template<class T>
+    requires(std::is_base_of_v<AI::IAlgorithm, T>)
+    void board_move_event(int index);
+
     void set_sidebar();
     void set_board();
 };

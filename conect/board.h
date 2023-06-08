@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <ai.h>
 #include <common.h>
 #include <engine.h>
 #include <memory>
@@ -54,7 +55,9 @@ class Board : public Canvas
       float x_pos,
       float y_pos) const noexcept;
     void clear_board(NVGcontext* ctx);
+
     bool add_coin(NVGcontext* ctx, gui::Column col, gui::Color color);
+
     void draw_coins(NVGcontext* ctx) const;
 
   public:

@@ -6,10 +6,12 @@
 
 #include <ai.h>
 #include <array>
-#include <engine.h>
 #include <memory>
+#include <vector>
 
 namespace conect {
+
+class Engine;
 
 namespace AI {
 
@@ -21,7 +23,7 @@ class Stratzilla_Algorithm final : public IAlgorithm
 {
   public:
     explicit Stratzilla_Algorithm(std::shared_ptr<Engine> engine,
-                                  std::shared_ptr<gui::Layout> board)
+                                  gui::Layout* board)
       : engine_(engine)
       , board_(board)
     {
@@ -48,14 +50,13 @@ class Stratzilla_Algorithm final : public IAlgorithm
                                     int beta,
                                     gui::Color color);
     score heuristic_function(points good, points bad, points empty);
-    // score get_score_of_set(std::array<int, gui::Size::ROW> set,
-    //                        gui::Color color);
+
     score get_score_of_set(std::vector<gui::Color> const& set,
                            gui::Color color);
 
     //  private:
     std::shared_ptr<Engine> engine_;
-    std::shared_ptr<gui::Layout> board_;
+    gui::Layout* board_;
 };
 
 } // namespace AI

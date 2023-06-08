@@ -5,6 +5,7 @@
 */
 
 #include <ai/stratzilla.h>
+#include <engine.h>
 #include <iostream>
 #include <vector>
 
@@ -19,7 +20,7 @@ constexpr int NUM_ROW = gui::Size::ROW;
 constexpr int NUM_COL = gui::Size::COL;
 
 void
-attempt_board_move(gui::Layout* board, unsigned int column, gui::Color color)
+board_move(gui::Layout* board, unsigned int column, gui::Color color)
 {
     // start from bottom of board going up
     for (unsigned int r = 0; r < NUM_ROW; r++) {
@@ -82,10 +83,9 @@ ST::minimax_alpha_beta_pruning(gui::Layout* board,
                               // it knows to avoid move
         }                     // otherwise, business as usual
         for (unsigned int c = 0; c < NUM_COL; c++) { // for each possible move
-            if ((*b)[NUM_ROW - 1][c] ==
-                gui::Color::NONE) { // but only if that column is non-full
+            if ((*b)[NUM_ROW - 1][c] == gui::Color::NONE) {
                 auto newBoard = *b;
-                attempt_board_move(&newBoard, c, color); // try the move
+                board_move(&newBoard, c, color); // try the move
                 int score = minimax_alpha_beta_pruning(
                   &newBoard,
                   depth - 1,
@@ -93,7 +93,7 @@ ST::minimax_alpha_beta_pruning(gui::Layout* board,
                   beta,
                   PLAYER)[0]; // find move based on that new board state
                 if (score > moveSoFar[0]) { // if better score, replace it, and
-                                            // consider that best move (for now)
+                    // consider that best move (for now)
                     moveSoFar = { score, (int)c };
                 }
                 alpha = max(alpha, moveSoFar[0]);
@@ -113,7 +113,7 @@ ST::minimax_alpha_beta_pruning(gui::Layout* board,
         for (unsigned int c = 0; c < NUM_COL; c++) {
             if ((*b)[NUM_ROW - 1][c] == gui::Color::NONE) {
                 auto newBoard = *b;
-                attempt_board_move(&newBoard, c, color);
+                board_move(&newBoard, c, color);
                 int score = minimax_alpha_beta_pruning(
                   &newBoard, depth - 1, alpha, beta, COMPUTER)[0];
                 if (score < moveSoFar[0]) {

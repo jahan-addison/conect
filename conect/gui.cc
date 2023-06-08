@@ -2,6 +2,7 @@
  *   conect is free software under GPL v3 -- see LICENSE for details.
  */
 
+#include <ai/stratzilla.h>
 #include <gui.h>
 #include <iostream>
 #include <memory>
@@ -36,33 +37,54 @@ GUI::set_board_actions()
           window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
         b->set_background_color(Color(255, 255, 255, 35));
 
-        b->set_callback([&, this, i] { this->on_coin_event(i); });
+        b->set_callback([&, this, i] { this->board_move_event<AI::ST>(i); });
     }
 }
 
+template<class T>
+requires(std::is_base_of_v<AI::IAlgorithm, T>)
 void
-GUI::on_coin_event(int index)
+GUI::board_move_event(int index)
 {
+    auto player = engine->get_current_player();
+
+    auto ai = T(engine, &canvas->layout);
+    auto winning_player = ai.get_next_move_is_winning(player->color);
+
     this->canvas->add_coin(this->nvg_context(),
                            static_cast<gui::Column>(index),
                            engine->get_current_player()->color);
 
-    auto winning_player = this->engine->is_won();
-
-    if (winning_player.has_value())
+    if (winning_player) {
         new nanogui::MessageDialog(this,
                                    nanogui::MessageDialog::Type::Information,
                                    "Winner!",
-                                   winning_player->name + " is the winner!");
+                                   player->name + " is the winner!");
+        return;
+    }
 
-    if (this->engine->is_full(this->canvas->layout))
+    if (this->engine->is_full(this->canvas->layout)) {
         new nanogui::MessageDialog(this,
                                    nanogui::MessageDialog::Type::Information,
                                    " ",
                                    "The game is a draw!");
+        return;
+    }
 
-    if (!winning_player.has_value())
-        engine->set_next_player();
+    engine->set_next_player();
+    engine->increment_turn_count();
+
+    if (!winning_player) {
+        if (player == engine->get_player(Engine::Players::Second)) {
+            auto next_move = ai.minimax_alpha_beta_pruning(
+              &canvas->layout, 10, 0 - INT_MAX, INT_MAX, gui::Color::BLUE)[1];
+            std::cout << "next move: " << next_move << std::endl;
+            if (next_move >= 0) {
+                board_move_event<AI::ST>(next_move);
+                engine->increment_turn_count();
+            }
+        }
+    }
 }
 
 void
@@ -78,9 +100,9 @@ GUI::set_sidebar()
         this->canvas->draw_coins(this->nvg_context());
     });
 
-    // @TODO networking
-    gui->add_button("Invite...",
-                    []() { std::cout << "Invite your friend!" << std::endl; });
+    // gui->add_button("Invite...",
+    //                 []() { std::cout << "Invite your friend!" << std::endl;
+    //                 });
 
     gui->add_group("Who's Playing?");
 
@@ -118,6 +140,7 @@ GUI::set_board()
     window->set_fixed_size(Vector2i(820, 560));
     window->set_position(Vector2i(/*820, 520*/ 250, 120));
     canvas = std::make_shared<Board>(window, engine);
+    canvas->clear_board(this->nvg_context());
     canvas->set_background_color({ 100, 100, 100, 255 });
     canvas->set_fixed_size({ 820, 520 });
 }
