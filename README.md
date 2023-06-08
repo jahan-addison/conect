@@ -1,6 +1,6 @@
 # conect
 
-> Connect-four, five, and fun variations with AI and network multiplayer support 🎲
+> Connect-four 🎲
 
 ![img](./resources/conect-mac.png)
 
