@@ -8,27 +8,27 @@
 
 using namespace conect;
 
-inline void
-clear_board_state_layout(gui::Layout* board)
-{
-    (*board).fill({ conect::gui::Color::NONE,
-                    conect::gui::Color::NONE,
-                    conect::gui::Color::NONE,
-                    conect::gui::Color::NONE,
-                    conect::gui::Color::NONE,
-                    conect::gui::Color::NONE });
-}
+// inline void
+// clear_board_state_layout(gui::Layout* board)
+// {
+//     (*board).fill({ conect::gui::Color::NONE,
+//                     conect::gui::Color::NONE,
+//                     conect::gui::Color::NONE,
+//                     conect::gui::Color::NONE,
+//                     conect::gui::Color::NONE,
+//                     conect::gui::Color::NONE });
+// }
 
-inline void
-fill_board_state_layout(gui::Layout* board)
-{
-    (*board).fill({ conect::gui::Color::RED,
-                    conect::gui::Color::RED,
-                    conect::gui::Color::RED,
-                    conect::gui::Color::RED,
-                    conect::gui::Color::RED,
-                    conect::gui::Color::RED });
-}
+// inline void
+// fill_board_state_layout(gui::Layout* board)
+// {
+//     (*board).fill({ conect::gui::Color::RED,
+//                     conect::gui::Color::RED,
+//                     conect::gui::Color::RED,
+//                     conect::gui::Color::RED,
+//                     conect::gui::Color::RED,
+//                     conect::gui::Color::RED });
+// }
 
 TEST_CASE("Stratzilla algorithm horizontal winning move" * doctest::timeout(50))
 {

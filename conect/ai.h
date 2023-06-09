@@ -10,26 +10,26 @@ namespace conect {
 
 class Engine;
 
-namespace AI {
+namespace ai {
 
-enum class Difficulty : int
+enum class difficulty : int
 {
-    Beginner,
-    Hard
+    beginner,
+    hard
 };
 
 class IAlgorithm
 {
   public:
-    virtual gui::Piece get_next_move(Difficulty d) const = 0;
-    virtual gui::Piece get_next_move_as_beginner_ai() const = 0;
-    virtual gui::Piece get_next_move_as_advanced_ai() const = 0;
+    virtual int get_next_move(difficulty d) const = 0;
+    virtual int get_next_move_as_beginner_ai() const = 0;
+    virtual int get_next_move_as_advanced_ai() const = 0;
 
-    virtual bool get_next_move_is_winning(gui::Color color) const = 0;
+    virtual bool get_next_move_is_winning(board::color color) const = 0;
 
   private:
-    virtual int tabulate_score(gui::Color color) = 0;
+    virtual int tabulate_score(board::color color) const = 0;
 };
 
-} // namespace AI
+} // namespace ai
 } // namespace conect

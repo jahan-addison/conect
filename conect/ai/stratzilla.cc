@@ -6,60 +6,69 @@
 
 #include <ai/stratzilla.h>
 #include <engine.h>
-#include <iostream>
 #include <vector>
 
 namespace conect {
 
-namespace AI {
+namespace ai {
 
 using std::max;
 using std::min;
 
-constexpr int NUM_ROW = gui::Size::ROW;
-constexpr int NUM_COL = gui::Size::COL;
+constexpr int NUM_ROW = board::size::row;
+constexpr int NUM_COL = board::size::col;
 
 void
-board_move(gui::Layout* board, unsigned int column, gui::Color color)
+board_move(board::layout* board, int column, board::color color)
 {
-    // start from bottom of board going up
-    for (unsigned int r = 0; r < NUM_ROW; r++) {
-        if ((*board)[r][column] == gui::Color::NONE) { // first available spot
-            (*board)[r][column] = color;               // set piece
+    for (int r = 0; r < NUM_ROW; r++) {
+        if ((*board)[r][column] == board::color::none) { // first available spot
+            (*board)[r][column] = color;                 // set piece
             break;
         }
     }
 }
 
-gui::Piece
-ST::get_next_move(Difficulty d) const
+int
+ST::get_next_move(difficulty d) const
 {
-    return { gui::Color::NONE, gui::Column::COL_E };
+    switch (d) {
+        case difficulty::beginner:
+            return get_next_move_as_beginner_ai();
+
+        case difficulty::hard:
+            return get_next_move_as_advanced_ai();
+
+        default:
+            return get_next_move_as_beginner_ai();
+    }
 }
 
-gui::Piece
+inline int
 ST::get_next_move_as_beginner_ai() const
 {
-    return { gui::Color::NONE, gui::Column::COL_E };
+    return minimax_alpha_beta_pruning(
+      board_, 5, 0 - INT_MAX, INT_MAX, board::color::blue)[1];
 }
 
-gui::Piece
+inline int
 ST::get_next_move_as_advanced_ai() const
 {
-    return { gui::Color::NONE, gui::Column::COL_E };
+    return minimax_alpha_beta_pruning(
+      board_, 12, 0 - INT_MAX, INT_MAX, board::color::blue)[1];
 }
 
 ST::move
-ST::minimax_alpha_beta_pruning(gui::Layout* board,
+ST::minimax_alpha_beta_pruning(board::layout* board,
                                int depth,
                                int alpha,
                                int beta,
-                               gui::Color color)
+                               board::color color) const
 {
     auto b = board;
     auto turns = engine_->get_turn_count();
-    auto PLAYER = gui::Color::RED;
-    auto COMPUTER = gui::Color::BLUE;
+    auto player = engine_->get_player(Engine::players::first)->color;
+    auto computer = engine_->get_player(Engine::players::second)->color;
     /**
      * if we've reached minimal depth allowed by the program
      * we need to stop, so force it to return current values
@@ -72,65 +81,66 @@ ST::minimax_alpha_beta_pruning(gui::Layout* board,
      */
     if (depth == 0 || depth >= (NUM_COL * NUM_ROW) - turns) {
         // get current score to return
-        return std::array<int, 2>{ tabulate_score(COMPUTER), -1 };
+        return std::array<int, 2>{ tabulate_score(computer), -1 };
     }
-    if (color == COMPUTER) { // if AI player
-        std::array<int, 2> moveSoFar = {
+    if (color == computer) { // if ai player
+        std::array<int, 2> best_move = {
             INT_MIN, -1
         }; // since maximizing, we want lowest possible value
-        if (get_next_move_is_winning(PLAYER)) { // if player about to win
-            return moveSoFar; // force it to say it's worst possible score, so
+        if (get_next_move_is_winning(player)) { // if player about to win
+            return best_move; // force it to say it's worst possible score, so
                               // it knows to avoid move
         }                     // otherwise, business as usual
         for (unsigned int c = 0; c < NUM_COL; c++) { // for each possible move
-            if ((*b)[NUM_ROW - 1][c] == gui::Color::NONE) {
-                auto newBoard = *b;
-                board_move(&newBoard, c, color); // try the move
+            if ((*b)[NUM_ROW - 1][c] == board::color::none) {
+                auto new_board = *b;
+                board_move(&new_board, c, color); // try the move
                 int score = minimax_alpha_beta_pruning(
-                  &newBoard,
+                  &new_board,
                   depth - 1,
                   alpha,
                   beta,
-                  PLAYER)[0]; // find move based on that new board state
-                if (score > moveSoFar[0]) { // if better score, replace it, and
+                  player)[0]; // find move based on that new board state
+                if (score > best_move[0]) { // if better score, replace it, and
                     // consider that best move (for now)
-                    moveSoFar = { score, (int)c };
+                    best_move = { score, (int)c };
                 }
-                alpha = max(alpha, moveSoFar[0]);
+                alpha = max(alpha, best_move[0]);
                 if (alpha >= beta) {
                     break;
                 } // for pruning
             }
         }
-        return moveSoFar; // return best possible move
+        return best_move; // return best possible move
     } else {
-        std::array<int, 2> moveSoFar = {
+        std::array<int, 2> best_move = {
             INT_MAX, -1
-        }; // since PLAYER is minimized, we want moves that diminish this score
-        if (get_next_move_is_winning(COMPUTER)) {
-            return moveSoFar; // if about to win, report that move as best
+        }; // since player is minimized, we want moves that diminish this score
+        if (get_next_move_is_winning(computer)) {
+            return best_move; // if about to win, report that move as best
         }
         for (unsigned int c = 0; c < NUM_COL; c++) {
-            if ((*b)[NUM_ROW - 1][c] == gui::Color::NONE) {
-                auto newBoard = *b;
-                board_move(&newBoard, c, color);
+            if ((*b)[NUM_ROW - 1][c] == board::color::none) {
+                auto new_board = *b;
+                board_move(&new_board, c, color);
                 int score = minimax_alpha_beta_pruning(
-                  &newBoard, depth - 1, alpha, beta, COMPUTER)[0];
-                if (score < moveSoFar[0]) {
-                    moveSoFar = { score, (int)c };
+                  &new_board, depth - 1, alpha, beta, computer)[0];
+                if (score < best_move[0]) {
+                    best_move = { score, (int)c };
                 }
-                beta = min(beta, moveSoFar[0]);
+                beta = min(beta, best_move[0]);
                 if (alpha >= beta) {
                     break;
                 }
             }
         }
-        return moveSoFar;
+        return best_move;
     }
 }
 
 ST::score
-ST::get_score_of_set(std::vector<gui::Color> const& set, gui::Color color)
+ST::get_score_of_set(std::vector<board::color> const& set,
+                     board::color color) const
 {
     points good = 0;  // points in favor of player
     points bad = 0;   // points against player
@@ -138,8 +148,8 @@ ST::get_score_of_set(std::vector<gui::Color> const& set, gui::Color color)
     for (points i = 0; i < set.size(); i++) {
         good += (set[i] == color) ? 1 : 0;
         bad +=
-          (set[i] == gui::Color::BLUE or set[i] == gui::Color::RED) ? 1 : 0;
-        empty += (set[i] == gui::Color::NONE) ? 1 : 0;
+          (set[i] == board::color::blue or set[i] == board::color::red) ? 1 : 0;
+        empty += (set[i] == board::color::none) ? 1 : 0;
     }
     // bad was calculated as (bad + good), so remove good
     bad -= good;
@@ -147,22 +157,22 @@ ST::get_score_of_set(std::vector<gui::Color> const& set, gui::Color color)
 }
 
 bool
-ST::get_next_move_is_winning(gui::Color color) const
+ST::get_next_move_is_winning(board::color color) const
 {
     auto b = board_;
-    unsigned int winSequence = 0; // to count adjacent pieces
+    unsigned int win_sequence = 0; // to count adjacent pieces
     // for horizontal checks
     for (unsigned int c = 0; c < NUM_COL - 3; c++) { // for each column
         for (unsigned int r = 0; r < NUM_ROW; r++) { // each row
             for (int i = 0; i < 4; i++) {            // recall you need 4 to win
                 if ((*b)[r][c + i] == color) {       // if not all pieces match
-                    winSequence++;                   // add sequence count
+                    win_sequence++;                  // add sequence count
                 }
-                if (winSequence == 4) {
+                if (win_sequence == 4) {
                     return true;
                 } // if 4 in row
             }
-            winSequence = 0; // reset counter
+            win_sequence = 0; // reset counter
         }
     }
     // vertical checks
@@ -170,13 +180,13 @@ ST::get_next_move_is_winning(gui::Color color) const
         for (unsigned int r = 0; r < NUM_ROW - 3; r++) {
             for (int i = 0; i < 4; i++) {
                 if ((*b)[r + i][c] == color) {
-                    winSequence++;
+                    win_sequence++;
                 }
-                if (winSequence == 4) {
+                if (win_sequence == 4) {
                     return true;
                 }
             }
-            winSequence = 0;
+            win_sequence = 0;
         }
     }
     // the below two are diagonal checks
@@ -184,45 +194,45 @@ ST::get_next_move_is_winning(gui::Color color) const
         for (unsigned int r = 3; r < NUM_ROW; r++) {
             for (int i = 0; i < 4; i++) {
                 if ((*b)[r - i][c + i] == color) {
-                    winSequence++;
+                    win_sequence++;
                 }
-                if (winSequence == 4) {
+                if (win_sequence == 4) {
                     return true;
                 }
             }
-            winSequence = 0;
+            win_sequence = 0;
         }
     }
     for (unsigned int c = 0; c < NUM_COL - 3; c++) {
         for (unsigned int r = 0; r < NUM_ROW - 3; r++) {
             for (int i = 0; i < 4; i++) {
                 if ((*b)[r + i][c + i] == color) {
-                    winSequence++;
+                    win_sequence++;
                 }
-                if (winSequence == 4) {
+                if (win_sequence == 4) {
                     return true;
                 }
             }
-            winSequence = 0;
+            win_sequence = 0;
         }
     }
     return false; // otherwise no winning move
 }
 
 ST::score
-ST::tabulate_score(gui::Color color)
+ST::tabulate_score(board::color color) const
 {
     score score{ 0 };
     auto b = board_;
 
-    std::array<gui::Color, NUM_COL> rs{ gui::Color::NONE };
-    std::array<gui::Color, NUM_ROW> cs{ gui::Color::NONE };
+    std::array<board::color, NUM_COL> rs{ board::color::none };
+    std::array<board::color, NUM_ROW> cs{ board::color::none };
 
-    std::vector<gui::Color> set(4);
+    std::vector<board::color> set(4);
 
     /**
      * horizontal checks, we're looking for sequences of 4
-     * containing any combination of AI, PLAYER, and empty pieces
+     * containing any combination of ai, player, and empty pieces
      */
     for (unsigned int r = 0; r < NUM_ROW; r++) {
         for (unsigned int c = 0; c < NUM_COL; c++) {
@@ -278,7 +288,7 @@ ST::tabulate_score(gui::Color color)
 }
 
 ST::score
-ST::heuristic_function(points g, points b, points z)
+ST::heuristic_function(points g, points b, points z) const
 {
     score score = 0;
     if (g == 4) {

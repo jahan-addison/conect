@@ -5,19 +5,23 @@
 #pragma once
 
 #include <ai.h>
-#include <board.h>
-#include <engine.h>
-#include <iostream>
 #include <memory>
 #include <nanogui/nanogui.h>
-#include <optional>
 #include <string>
+
+#if defined(_WIN32)
+#if defined(APIENTRY)
+#undef APIENTRY
+#endif
+#include <windows.h>
+#endif
 
 namespace conect {
 
-using namespace nanogui;
+class Engine;
+class Board;
 
-class GUI : public Screen
+class GUI : public nanogui::Screen
 {
   public:
     GUI();
@@ -29,11 +33,15 @@ class GUI : public Screen
     void set_board_actions();
 
     template<class T>
-    requires(std::is_base_of_v<AI::IAlgorithm, T>)
-    void board_move_event(int index);
+    requires(std::is_base_of_v<ai::IAlgorithm, T>)
+    void board_event(board::column column);
+    void state_event(bool ending);
 
     void set_sidebar();
     void set_board();
+
+  private:
+    bool ended_{ false };
 };
 
 } // namespace conect

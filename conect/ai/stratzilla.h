@@ -13,7 +13,7 @@ namespace conect {
 
 class Engine;
 
-namespace AI {
+namespace ai {
 
 class Stratzilla_Algorithm;
 
@@ -23,7 +23,7 @@ class Stratzilla_Algorithm final : public IAlgorithm
 {
   public:
     explicit Stratzilla_Algorithm(std::shared_ptr<Engine> engine,
-                                  gui::Layout* board)
+                                  board::layout* board)
       : engine_(engine)
       , board_(board)
     {
@@ -34,31 +34,31 @@ class Stratzilla_Algorithm final : public IAlgorithm
     using points = unsigned int;
 
   public:
-    gui::Piece get_next_move(Difficulty d) const override;
+    int get_next_move(difficulty d) const override;
 
-    gui::Piece get_next_move_as_beginner_ai() const override;
-    gui::Piece get_next_move_as_advanced_ai() const override;
-    bool get_next_move_is_winning(gui::Color) const override;
-
-    //  private:
-    score tabulate_score(gui::Color c) override;
+    inline int get_next_move_as_beginner_ai() const override;
+    inline int get_next_move_as_advanced_ai() const override;
+    bool get_next_move_is_winning(board::color) const override;
 
     //  private:
-    move minimax_alpha_beta_pruning(gui::Layout* board,
+    score tabulate_score(board::color c) const override;
+
+    //  private:
+    move minimax_alpha_beta_pruning(board::layout* board,
                                     int depth,
                                     int alpha,
                                     int beta,
-                                    gui::Color color);
-    score heuristic_function(points good, points bad, points empty);
+                                    board::color color) const;
+    score heuristic_function(points good, points bad, points empty) const;
 
-    score get_score_of_set(std::vector<gui::Color> const& set,
-                           gui::Color color);
+    score get_score_of_set(std::vector<board::color> const& set,
+                           board::color color) const;
 
     //  private:
     std::shared_ptr<Engine> engine_;
-    gui::Layout* board_;
+    board::layout* board_;
 };
 
-} // namespace AI
+} // namespace ai
 
 } // namespace conect

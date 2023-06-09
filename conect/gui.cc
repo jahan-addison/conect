@@ -3,15 +3,20 @@
  */
 
 #include <ai/stratzilla.h>
+#include <board.h>
+#include <engine.h>
 #include <gui.h>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace conect {
 
+using namespace nanogui;
+
 GUI::GUI()
-  : Screen(Vector2i(1150, 800), "conect", true, false, true, true, false, 4, 1)
+  : Screen(Vector2i(1150, 800), "conect", false, false, true, true, false, 4, 1)
   , engine(std::make_shared<Engine>())
 
 {
@@ -32,30 +37,61 @@ GUI::set_board_actions()
       new GridLayout(Orientation::Horizontal, 7, Alignment::Fill));
     window->set_fixed_size(Vector2i(820, 60));
     window->set_position(Vector2i(250, 50));
-    for (auto i = 1; i <= 7; i++) {
+    for (board::column column = 0; column < 7; column++) {
         Button* b =
-          window->add<Button>(std::to_string(i), FA_ANGLE_DOUBLE_DOWN);
+          window->add<Button>(std::to_string(column + 1), FA_ANGLE_DOUBLE_DOWN);
         b->set_background_color(Color(255, 255, 255, 35));
 
-        b->set_callback([&, this, i] { this->board_move_event<AI::ST>(i); });
+        b->set_callback(
+          [&, this, column] { this->board_event<ai::ST>(column); });
     }
 }
 
 template<class T>
-requires(std::is_base_of_v<AI::IAlgorithm, T>)
+requires(std::is_base_of_v<ai::IAlgorithm, T>)
 void
-GUI::board_move_event(int index)
+GUI::board_event(board::column column)
 {
     auto player = engine->get_current_player();
 
     auto ai = T(engine, &canvas->layout);
-    auto winning_player = ai.get_next_move_is_winning(player->color);
 
-    this->canvas->add_coin(this->nvg_context(),
-                           static_cast<gui::Column>(index),
-                           engine->get_current_player()->color);
+    state_event(ai.get_next_move_is_winning(player->color));
 
-    if (winning_player) {
+    if (!ended_) {
+        this->canvas->add_coin(
+          this->nvg_context(), column, engine->get_current_player()->color);
+        this->redraw();
+    }
+    auto ending = ai.get_next_move_is_winning(player->color);
+    state_event(ending);
+
+    if (!ended_ and !ending) {
+        engine->set_next_player();
+        engine->increment_turn_count();
+    }
+
+    canvas->print_board();
+
+    if (!ending) {
+        if (player == engine->get_player(Engine::players::second)) {
+            auto last_player = *player;
+            auto next_move =
+              ai.get_next_move(this->engine->get_current_difficulty());
+            if (next_move >= 0) {
+                board_event<ai::ST>(static_cast<board::column>(next_move));
+            }
+        }
+    }
+}
+
+void
+GUI::state_event(bool ending)
+{
+    auto player = engine->get_current_player();
+
+    if (!ended_ and ending) {
+        ended_ = true;
         new nanogui::MessageDialog(this,
                                    nanogui::MessageDialog::Type::Information,
                                    "Winner!",
@@ -64,26 +100,12 @@ GUI::board_move_event(int index)
     }
 
     if (this->engine->is_full(this->canvas->layout)) {
+        ended_ = true;
         new nanogui::MessageDialog(this,
                                    nanogui::MessageDialog::Type::Information,
                                    " ",
                                    "The game is a draw!");
         return;
-    }
-
-    engine->set_next_player();
-    engine->increment_turn_count();
-
-    if (!winning_player) {
-        if (player == engine->get_player(Engine::Players::Second)) {
-            auto next_move = ai.minimax_alpha_beta_pruning(
-              &canvas->layout, 10, 0 - INT_MAX, INT_MAX, gui::Color::BLUE)[1];
-            std::cout << "next move: " << next_move << std::endl;
-            if (next_move >= 0) {
-                board_move_event<AI::ST>(next_move);
-                engine->increment_turn_count();
-            }
-        }
     }
 }
 
@@ -100,34 +122,30 @@ GUI::set_sidebar()
         this->canvas->draw_coins(this->nvg_context());
     });
 
-    // gui->add_button("Invite...",
-    //                 []() { std::cout << "Invite your friend!" << std::endl;
-    //                 });
-
     gui->add_group("Who's Playing?");
 
     gui->add_variable<std::string>(
       "Player 1",
       [&](std::string value) {
-          auto player = this->engine->get_player(Engine::Players::First);
+          auto player = this->engine->get_player(Engine::players::first);
           this->engine->set_player_name(player, value);
       },
-      [&]() { return this->engine->get_player(Engine::Players::First)->name; });
+      [&]() { return this->engine->get_player(Engine::players::first)->name; });
 
     gui->add_variable<std::string>(
       "Player 2",
       [&](std::string value) {
-          auto player = this->engine->get_player(Engine::Players::Second);
+          auto player = this->engine->get_player(Engine::players::second);
           this->engine->set_player_name(player, value);
       },
       [&]() {
-          return this->engine->get_player(Engine::Players::Second)->name;
+          return this->engine->get_player(Engine::players::second)->name;
       });
 
     gui
-      ->add_variable<AI::Difficulty>(
+      ->add_variable<ai::difficulty>(
         "Difficulty",
-        [&](AI::Difficulty d) { this->engine->set_current_difficulty(d); },
+        [&](ai::difficulty d) { this->engine->set_current_difficulty(d); },
         [&]() { return this->engine->get_current_difficulty(); })
       ->set_items({ "Beginner", "Hard" });
 }

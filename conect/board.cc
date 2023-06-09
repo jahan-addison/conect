@@ -3,7 +3,6 @@
  */
 
 #include <board.h>
-#include <common.h>
 #include <error.h>
 #include <filesystem>
 #include <iostream>
@@ -14,99 +13,30 @@ namespace conect {
 
 namespace fs = std::filesystem;
 
-using nanogui::ref;
-using nanogui::Vector2f;
-using nanogui::Vector2i;
-
-inline auto
+inline fs::path
 get_resource(std::string_view file,
-             std::string_view file_root = gui::root_resource_dir)
+             std::string_view file_root = board::root_resource_directory)
 {
-    if (std::filesystem::exists(fs::path(file_root.data()) / file.data()))
+    if (fs::exists(fs::path(file_root.data()) / file.data()))
         return fs::path(file_root.data()) / file.data();
     else
         return fs::path("");
 }
 
-constexpr std::string_view
-Board::column_to_string(gui::Column col)
-{
-    using Column = gui::Column;
-    switch (col) {
-        case Column::COL_E:
-            return "none";
-        case Column::COL_1:
-            return "column 1";
-        case Column::COL_2:
-            return "column 2";
-        case Column::COL_3:
-            return "column 3";
-        case Column::COL_4:
-            return "column 4";
-        case Column::COL_5:
-            return "column 5";
-        case Column::COL_6:
-            return "column 6";
-        case Column::COL_7:
-            return "column 7";
-
-        default:
-            return "unknown column";
-    }
-}
-
-constexpr int
-Board::column_to_int(gui::Column col)
-{
-    using Column = gui::Column;
-    switch (col) {
-        case Column::COL_1:
-            return 0;
-        case Column::COL_2:
-            return 1;
-        case Column::COL_3:
-            return 2;
-        case Column::COL_4:
-            return 3;
-        case Column::COL_5:
-            return 4;
-        case Column::COL_6:
-            return 5;
-        case Column::COL_7:
-            return 6;
-        default:
-            return 0;
-    }
-}
-
-gui::Image
-Board::load_resource(NVGcontext* ctx, gui::Resource_Type type)
+resource::image
+Board::load_resource(NVGcontext* ctx, resource::type type)
 {
     switch (type) {
-        case gui::Resource_Type::BOARD: {
-            fs::path path = get_resource(gui::board_resource);
-            if (path.empty())
-                error_exit_program_dialog(
-                  this->parent(),
-                  "Board::gui::load_resource(): could not load game board "
-                  "image");
-
+        case resource::type::board: {
+            fs::path path = get_resource(BOARD_RESOURCE_FILE);
             return nvgCreateImage(ctx, path.string().c_str(), 0);
         }
-        case gui::Resource_Type::RED_COIN: {
-            auto path = get_resource(gui::red_coin_resource);
-            if (path.empty())
-                error_exit_program_dialog(this->parent(),
-                                          "Board::gui::load_resource(): "
-                                          "could not load red coin image");
+        case resource::type::red_coin: {
+            auto path = get_resource(BOARD_RED_COIN_RESOURCE);
             return nvgCreateImage(ctx, path.string().c_str(), 0);
         }
-        case gui::Resource_Type::BLUE_COIN: {
-            auto path = get_resource(gui::blue_coin_resource);
-            if (path.empty())
-                error_exit_program_dialog(this->parent(),
-                                          "Board::gui::load_resource(): "
-                                          "could not load blue coin image");
+        case resource::type::blue_coin: {
+            auto path = get_resource(BOARD_BLUE_COIN_RESOURCE);
             return nvgCreateImage(ctx, path.string().c_str(), 0);
         }
 
@@ -129,15 +59,11 @@ Board::get_coin_drawing_pos(float x_pos, float y_pos) const noexcept
 void
 Board::clear_board(NVGcontext* ctx)
 {
-    layout.fill({ gui::Color::NONE,
-                  gui::Color::NONE,
-                  gui::Color::NONE,
-                  gui::Color::NONE,
-                  gui::Color::NONE,
-                  gui::Color::NONE });
+    for (auto& row : layout)
+        std::fill_n(row.begin(), row.size(), board::color::none);
 
-    for (auto& column : i_layout) {
-        for (auto& texture : column) {
+    for (auto& row : i_layout) {
+        for (auto& texture : row) {
             if (texture != 0) {
                 nvgDeleteImage(ctx, texture);
                 texture = 0;
@@ -146,26 +72,61 @@ Board::clear_board(NVGcontext* ctx)
     }
 }
 
-bool
-Board::add_coin(NVGcontext* ctx, gui::Column col, gui::Color color)
+void
+Board::print_board() const
 {
-
-    auto location = &i_layout[column_to_int(col)];
-    auto test = std::ranges::find(location->begin(), location->end(), 0);
-    if (test != location->end()) {
-        this->layout[column_to_int(col)][test - location->begin()] = color;
-        if (color == gui::Color::BLUE) {
-            location->operator[](test - location->begin()) =
-              load_resource(ctx, gui::Resource_Type::BLUE_COIN);
-        } else {
-            location->operator[](test - location->begin()) =
-              load_resource(ctx, gui::Resource_Type::RED_COIN);
+    unsigned int count = 0;
+    for (unsigned int i = 0; i < board::size::col; i++) {
+        std::cout << " " << i;
+    }
+    std::cout << std::endl << "---------------" << std::endl;
+    for (unsigned int r = 0; r < board::size::row; r++) {
+        for (unsigned int c = 0; c < board::size::col; c++) {
+            std::cout << "|";
+            switch (layout[board::size::row - r - 1][c]) {
+                case board::color::none:
+                    std::cout << " ";
+                    break;
+                case board::color::red:
+                    std::cout << "O";
+                    count++;
+                    break;
+                case board::color::blue:
+                    std::cout << "X";
+                    count++;
+                    break;
+            }
+            if (c + 1 == board::size::col) {
+                std::cout << "|";
+            }
         }
-        if (location->operator[](test - location->begin()) == 0)
-            error_exit_program_dialog(
-              this->parent(), "Board::add_coin(): could not load coin texture");
+        std::cout << std::endl;
+    }
+    std::cout << "---------------" << std::endl;
+    std::cout << "Piece count: " << count << std::endl;
+    std::cout << std::endl;
+}
 
-        return true;
+bool
+Board::add_coin(NVGcontext* ctx, board::column column, board::color color)
+{
+    for (unsigned int r = 0; r < board::size::row; r++) {
+        if (layout[r][column] == board::color::none) { // first available spot
+            layout[r][column] = color;                 // set piece
+            auto location = &i_layout[r];
+            if (color == board::color::blue) {
+                location->operator[](column) =
+                  load_resource(ctx, resource::type::blue_coin);
+            } else {
+                location->operator[](column) =
+                  load_resource(ctx, resource::type::red_coin);
+            }
+            if (location->operator[](column) == 0)
+                error_exit_program_dialog(
+                  this->parent(),
+                  "Board::add_coin(): could not load coin texture");
+            return true;
+        }
     }
     return false;
 }
@@ -209,11 +170,11 @@ Board::draw(NVGcontext* ctx)
         error_exit_program_dialog(
           this->parent(), "Board::draw(): could not find parent screen!");
     if (board == -1)
-        board = load_resource(ctx, gui::Resource_Type::BOARD);
+        board = load_resource(ctx, resource::type::board);
 
     if (board == 0)
-        error_exit_program_dialog(
-          this->parent(), "Board::draw(): could not load game board image");
+        error_exit_program_dialog(this->parent(),
+                                  "Board::draw(): could not load board image");
 
     NVGpaint img_pattern = nvgImagePattern(
       ctx, m_pos.x(), 0, m_size.x(), m_size.y(), 0.f, board, 1.f);

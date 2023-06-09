@@ -83,7 +83,7 @@ class GLTexture
         switch (n) {
             case 1:
                 internalFormat = GL_R8;
-                format = GL_RED;
+                format = GL_red;
                 break;
             case 2:
                 internalFormat = GL_RG8;
