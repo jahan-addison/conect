@@ -15,7 +15,7 @@ main()
             app->dec_ref();
             app->draw_all();
             app->set_visible(true);
-            nanogui::mainloop(-1);
+            nanogui::mainloop(3 / 60.f * 1000);
         }
         nanogui::shutdown();
     } catch (const std::exception& e) {

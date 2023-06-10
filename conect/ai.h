@@ -12,6 +12,8 @@ class Engine;
 
 namespace ai {
 
+class Stratzilla_Algorithm;
+
 enum class difficulty : int
 {
     beginner,

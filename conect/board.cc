@@ -2,12 +2,19 @@
  *   conect is free software under GPL v3 -- see LICENSE for details.
  */
 
+#include <ai/stratzilla.h>
 #include <board.h>
+#include <chrono>
 #include <error.h>
 #include <filesystem>
 #include <iostream>
 #include <nanogui/messagedialog.h>
+
+#include <nanogui/opengl.h>
+#include <nanogui/renderpass.h>
+#include <nanogui/screen.h>
 #include <ranges>
+#include <thread>
 
 namespace conect {
 
@@ -162,6 +169,67 @@ Board::draw_coins(NVGcontext* ctx) const
     }
 }
 
+static int end_dialog_open = 0;
+
+void
+Board::draw_end_state(bool ending)
+{
+    if (!end_dialog_open) {
+        auto player = engine->get_current_player();
+        if (!this->engine->get_engine_state() and ending) {
+            this->engine->end_engine_state();
+            auto dialog = new nanogui::MessageDialog(
+              this->screen(),
+              nanogui::MessageDialog::Type::Information,
+              "Winner!",
+              player->name + " is the winner!");
+            dialog->set_callback(
+              [&]([[maybe_unused]] int result) { end_dialog_open = 1; });
+        }
+
+        if (this->engine->is_full(layout)) {
+            this->engine->end_engine_state();
+            auto dialog = new nanogui::MessageDialog(
+              this->screen(),
+              nanogui::MessageDialog::Type::Information,
+              " ",
+              "The game is a draw!");
+            dialog->set_callback(
+              [&]([[maybe_unused]] int result) { end_dialog_open = 1; });
+        }
+    }
+}
+
+bool
+Board::draw_player_state()
+{
+    auto player = engine->get_current_player();
+    auto ai = engine->ai_factory<ai::ST>(engine, &this->layout);
+
+    if (player == engine->get_player(Engine::players::second) and
+        !this->engine->get_engine_state()) {
+        auto next_move =
+          ai.get_next_move(this->engine->get_current_difficulty());
+        // did the last player already win?
+        if (!ai.get_next_move_is_winning(player->color)) {
+            this->add_coin(
+              this->screen()->nvg_context(), next_move, player->color);
+            // delay event loop to give feel of "thinking"
+            nanogui::async(
+              [] { std::this_thread::sleep_for(std::chrono::seconds(1)); });
+        }
+        // did the ai win just now?
+        if (!ai.get_next_move_is_winning(player->color)) {
+            engine->set_next_player();
+            engine->increment_turn_count();
+        }
+#if defined(DEBUG)
+        canvas->print_board();
+#endif
+    }
+    return ai.get_next_move_is_winning(player->color);
+}
+
 void
 Board::draw(NVGcontext* ctx)
 {
@@ -186,6 +254,9 @@ Board::draw(NVGcontext* ctx)
     nvgFill(ctx);
 
     draw_coins(ctx);
+
+    if (!end_dialog_open)
+        draw_end_state(draw_player_state());
 }
 
 } // namespace conect

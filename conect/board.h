@@ -9,15 +9,10 @@
 #include <engine.h>
 #include <memory>
 #include <nanogui/canvas.h>
-#include <nanogui/opengl.h>
-#include <nanogui/renderpass.h>
-#include <nanogui/screen.h>
 #include <string_view>
 #include <utility>
 
 namespace conect {
-
-class Engine;
 
 class Board : public nanogui::Canvas
 {
@@ -39,8 +34,9 @@ class Board : public nanogui::Canvas
       float x_pos,
       float y_pos) const noexcept;
     void clear_board(NVGcontext* ctx);
-
     void print_board() const;
+    bool draw_player_state();
+    void draw_end_state(bool ending);
 
     bool add_coin(NVGcontext* ctx, board::column column, board::color color);
 

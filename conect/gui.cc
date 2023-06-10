@@ -42,71 +42,32 @@ GUI::set_board_actions()
           window->add<Button>(std::to_string(column + 1), FA_ANGLE_DOUBLE_DOWN);
         b->set_background_color(Color(255, 255, 255, 35));
 
-        b->set_callback(
-          [&, this, column] { this->board_event<ai::ST>(column); });
+        b->set_callback([&, this, column] { this->board_event(column); });
     }
 }
 
-template<class T>
-requires(std::is_base_of_v<ai::IAlgorithm, T>)
 void
 GUI::board_event(board::column column)
 {
     auto player = engine->get_current_player();
+    auto ai = engine->ai_factory<ai::ST>(engine, &this->canvas->layout);
 
-    auto ai = T(engine, &canvas->layout);
+    if (this->engine->get_engine_state())
+        return;
 
-    state_event(ai.get_next_move_is_winning(player->color));
-
-    if (!ended_) {
-        this->canvas->add_coin(
-          this->nvg_context(), column, engine->get_current_player()->color);
-        this->redraw();
-    }
-    auto ending = ai.get_next_move_is_winning(player->color);
-    state_event(ending);
-
-    if (!ended_ and !ending) {
-        engine->set_next_player();
-        engine->increment_turn_count();
-    }
-
-    canvas->print_board();
-
-    if (!ending) {
-        if (player == engine->get_player(Engine::players::second)) {
-            auto last_player = *player;
-            auto next_move =
-              ai.get_next_move(this->engine->get_current_difficulty());
-            if (next_move >= 0) {
-                board_event<ai::ST>(static_cast<board::column>(next_move));
+    if (player == engine->get_player(Engine::players::first)) {
+        this->canvas->add_coin(this->nvg_context(), column, player->color);
+        // was the last move a winning move?
+        if (!ai.get_next_move_is_winning(player->color)) {
+            if (!this->engine->get_engine_state()) {
+                engine->set_next_player();
+                engine->increment_turn_count();
             }
         }
     }
-}
-
-void
-GUI::state_event(bool ending)
-{
-    auto player = engine->get_current_player();
-
-    if (!ended_ and ending) {
-        ended_ = true;
-        new nanogui::MessageDialog(this,
-                                   nanogui::MessageDialog::Type::Information,
-                                   "Winner!",
-                                   player->name + " is the winner!");
-        return;
-    }
-
-    if (this->engine->is_full(this->canvas->layout)) {
-        ended_ = true;
-        new nanogui::MessageDialog(this,
-                                   nanogui::MessageDialog::Type::Information,
-                                   " ",
-                                   "The game is a draw!");
-        return;
-    }
+#if defined(DEBUG)
+    canvas->print_board();
+#endif
 }
 
 void
@@ -118,6 +79,8 @@ GUI::set_sidebar()
 
     gui->add_group("Options");
     gui->add_button("Reset", [&, this] {
+        this->engine->reset_turns();
+        this->engine->reset_engine_state();
         this->canvas->clear_board(this->nvg_context());
         this->canvas->draw_coins(this->nvg_context());
     });

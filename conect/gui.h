@@ -32,16 +32,10 @@ class GUI : public nanogui::Screen
     std::shared_ptr<Board> canvas;
     void set_board_actions();
 
-    template<class T>
-    requires(std::is_base_of_v<ai::IAlgorithm, T>)
     void board_event(board::column column);
-    void state_event(bool ending);
 
     void set_sidebar();
     void set_board();
-
-  private:
-    bool ended_{ false };
 };
 
 } // namespace conect
