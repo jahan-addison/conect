@@ -3,23 +3,18 @@
 cmake_minimum_required(VERSION 3.14)
 # cmake_policy(SET CMP0127 OLD)
 
-# Set project name, version and laguages her
-# the source. See config.h.in for some more details.
-project(conect VERSION 0.0.1.0 LANGUAGES CXX)
+# See config.h.in for some more details.
+project(conect VERSION 1.0.0.0 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
 option(ENABLE_WARNINGS_SETTINGS "Allow target_set_warnings to add flags and defines.
                                  Set this to OFF if you want to provide your own warning parameters." ON)
 
-option(ENABLE_DOCTESTS "Include tests in the library. Setting this to OFF will remove all doctest related code.
-                        Tests in test/*.cc will still be enabled." ON)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 include(ConfigSafeGuards)
 include(Colors)
 include(CTest)
-include(Doctest)
 include(Misc)
 include(Warnings)
 
@@ -29,16 +24,16 @@ set(SOURCES          # All .cc files in project
     conect/board.cc
     conect/ai/stratzilla.cc
 )
-set(TESTFILES        # All .cc files in test/
-    test/main.cc
-    test/ai/stratzilla.cc
-    test/board.cc
-)
+
 set(LIBRARY_NAME conect)
 
-# Compile all sources into a library.
-
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
+
+if (WIN32)
+    set(SUBSYSTEM_LINKER_OPTIONS "-mwindows")
+endif()
+
+target_link_options(${LIBRARY_NAME} PUBLIC ${SUBSYSTEM_LINKER_OPTIONS})
 
 
 # Lib needs its header files, and users of the library must also see these (PUBLIC).
@@ -56,10 +51,6 @@ add_definitions(${NANOGUI_EXTRA_DEFS})
 # On top of adding the path to nanogui/include, you may need extras
 # include_directories(${NANOGUI_EXTRA_INCS})
 
-# There's also doctests within the library, so we need to see this as well.
-target_link_libraries(${LIBRARY_NAME} PUBLIC doctest)
-
-# Set the compile options you want (change as needed).
 target_set_warnings(${LIBRARY_NAME} ENABLE ALL DISABLE Annoying)
 # target_compile_options(${LIBRARY_NAME} ... )  # For setting manually.
 
@@ -67,9 +58,9 @@ target_set_warnings(${LIBRARY_NAME} ENABLE ALL DISABLE Annoying)
 # If you add more executables, copy these lines accordingly.
 add_executable(main conect/conect.cc)   # Name of exec. and location of file.
 target_link_libraries(main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
+
 target_set_warnings(main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).
 
-# Set the properties you require, e.g. what C++ standard to use. Here applied to library and main (change as needed).
 set_target_properties(
     ${LIBRARY_NAME} main
       PROPERTIES
@@ -78,5 +69,3 @@ set_target_properties(
         CXX_EXTENSIONS NO
 )
 
-# Set up tests
-add_subdirectory(test)

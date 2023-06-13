@@ -60,7 +60,7 @@ enum class type
 };
 
 using layout =
-  std::array<std::array<image, board::size::col>, board::size::row>;
+  std::array<std::array<image, board::size::row>, board::size::col>;
 
 } // namespace resource
 

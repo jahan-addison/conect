@@ -118,22 +118,26 @@ bool
 Board::add_coin(NVGcontext* ctx, board::column column, board::color color)
 {
     for (unsigned int r = 0; r < board::size::row; r++) {
-        if (layout[r][column] == board::color::none) { // first available spot
-            layout[r][column] = color;                 // set piece
-            auto location = &i_layout[r];
-            if (color == board::color::blue) {
-                location->operator[](column) =
-                  load_resource(ctx, resource::type::blue_coin);
-            } else {
-                location->operator[](column) =
-                  load_resource(ctx, resource::type::red_coin);
-            }
-            if (location->operator[](column) == 0)
-                error_exit_program_dialog(
-                  this->parent(),
-                  "Board::add_coin(): could not load coin texture");
-            return true;
+        if (layout[r][column] == board::color::none) {
+            layout[r][column] = color;
+            break;
         }
+    }
+    // we present the transpose of the layout matrix to the gui
+    auto location = &i_layout[column];
+    auto available = std::ranges::find(location->begin(), location->end(), 0);
+    if (available != location->end()) {
+        if (color == board::color::blue) {
+            location->operator[](available - location->begin()) =
+              load_resource(ctx, resource::type::blue_coin);
+        } else {
+            location->operator[](available - location->begin()) =
+              load_resource(ctx, resource::type::red_coin);
+        }
+        if (location->operator[](available - location->begin()) == 0)
+            error_exit_program_dialog(
+              this->parent(), "Board::add_coin(): could not load coin texture");
+        return true;
     }
     return false;
 }
@@ -174,9 +178,9 @@ static int end_dialog_open = 0;
 void
 Board::draw_end_state(bool ending)
 {
-    if (!end_dialog_open) {
-        auto player = engine->get_current_player();
+    if (this->parent()->visible_recursive() and !end_dialog_open) {
         if (!this->engine->get_engine_state() and ending) {
+            auto player = engine->get_current_player();
             this->engine->end_engine_state();
             auto dialog = new nanogui::MessageDialog(
               this->screen(),
@@ -214,9 +218,11 @@ Board::draw_player_state()
         if (!ai.get_next_move_is_winning(player->color)) {
             this->add_coin(
               this->screen()->nvg_context(), next_move, player->color);
-            // delay event loop to give feel of "thinking"
-            nanogui::async(
-              [] { std::this_thread::sleep_for(std::chrono::seconds(1)); });
+            // delay event loop to give feel of "thinking" on easy mode :)
+            if (this->engine->get_current_difficulty() ==
+                ai::difficulty::beginner)
+                nanogui::async(
+                  [] { std::this_thread::sleep_for(std::chrono::seconds(1)); });
         }
         // did the ai win just now?
         if (!ai.get_next_move_is_winning(player->color)) {

@@ -1,5 +1,5 @@
 /*
-    The code below uses a modified version of the @stratzilla Alpha-beta
+    The code below is a heavy modification of the @stratzilla Alpha-beta
     pruning Minimax algorithm for connect-4. The license is here:
     https://github.com/stratzilla/connect-four/blob/master/LICENSE
 */
