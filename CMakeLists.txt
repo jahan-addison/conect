@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.14)
 # cmake_policy(SET CMP0127 OLD)
 
 # See config.h.in for some more details.
-project(conect VERSION 1.0.0.0 LANGUAGES CXX)
+project(conect VERSION 1.0.1.0 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
