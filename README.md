@@ -21,6 +21,8 @@ This project works in the latest Visual Studio preview (with C++20 support).
 
 * Install dependencies (windows, mingw/msys UCTR64)
 
+> `pacman -Syuu`
+
 > `pacman -Sy base-devel python3 mingw-w64-x86_64-doctest mingw-w64-x86_64-mesa mingw-w64-ucrt-x86_64-cmake`
 
 Note that in mingw, the default cmake generator is `ninja`. Replace the `make` commands below in the build section with just `ninja`
