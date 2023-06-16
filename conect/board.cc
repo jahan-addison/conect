@@ -173,33 +173,33 @@ Board::draw_coins(NVGcontext* ctx) const
     }
 }
 
-static int end_dialog_open = 0;
-
 void
 Board::draw_end_state(bool ending)
 {
-    if (this->parent()->visible_recursive() and !end_dialog_open) {
+    if (!end_dialog) {
         if (!this->engine->get_engine_state() and ending) {
             auto player = engine->get_current_player();
             this->engine->end_engine_state();
             auto dialog = new nanogui::MessageDialog(
-              this->screen(),
+              this->parent(),
               nanogui::MessageDialog::Type::Information,
               "Winner!",
               player->name + " is the winner!");
-            dialog->set_callback(
-              [&]([[maybe_unused]] int result) { end_dialog_open = 1; });
+            dialog->set_callback([&, this]([[maybe_unused]] int result) {
+                this->end_dialog = true;
+            });
         }
 
         if (this->engine->is_full(layout)) {
             this->engine->end_engine_state();
             auto dialog = new nanogui::MessageDialog(
-              this->screen(),
+              this->parent(),
               nanogui::MessageDialog::Type::Information,
               " ",
               "The game is a draw!");
-            dialog->set_callback(
-              [&]([[maybe_unused]] int result) { end_dialog_open = 1; });
+            dialog->set_callback([&, this]([[maybe_unused]] int result) {
+                this->end_dialog = true;
+            });
         }
     }
 }
@@ -218,11 +218,9 @@ Board::draw_player_state()
         if (!ai.get_next_move_is_winning(player->color)) {
             this->add_coin(
               this->screen()->nvg_context(), next_move, player->color);
-            // delay event loop to give feel of "thinking" on easy mode :)
-            if (this->engine->get_current_difficulty() ==
-                ai::difficulty::beginner)
-                nanogui::async(
-                  [] { std::this_thread::sleep_for(std::chrono::seconds(1)); });
+            // delay event loop to give feel of "thinking"
+            nanogui::async(
+              [] { std::this_thread::sleep_for(std::chrono::seconds(1)); });
         }
         // did the ai win just now?
         if (!ai.get_next_move_is_winning(player->color)) {
@@ -261,7 +259,7 @@ Board::draw(NVGcontext* ctx)
 
     draw_coins(ctx);
 
-    if (!end_dialog_open)
+    if (!end_dialog)
         draw_end_state(draw_player_state());
 }
 

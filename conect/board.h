@@ -44,6 +44,7 @@ class Board : public nanogui::Canvas
 
   public:
     board::layout layout{};
+    bool end_dialog{ false };
     std::shared_ptr<Engine> engine;
 };
 
