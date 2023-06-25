@@ -50,7 +50,8 @@ void
 GUI::board_event(board::column column)
 {
     auto player = engine->get_current_player();
-    auto ai = engine->ai_factory<ai::ST>(engine, &this->canvas->layout);
+    auto ai =
+      engine->ai_factory<ai::ST>(engine, this->canvas->get_board_layout());
 
     if (this->engine->get_engine_state())
         return;

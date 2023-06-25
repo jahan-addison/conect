@@ -5,9 +5,9 @@
 #include <ai/stratzilla.h>
 #include <board.h>
 #include <chrono>
-#include <error.h>
 #include <filesystem>
 #include <iostream>
+#include <message.h>
 #include <nanogui/messagedialog.h>
 
 #include <nanogui/opengl.h>
@@ -174,33 +174,19 @@ Board::draw_coins(NVGcontext* ctx) const
 }
 
 void
-Board::draw_end_state(bool ending)
+Board::draw_state(bool ending)
 {
-    if (!end_dialog) {
+    if (!this->engine->get_engine_state()) {
         if (!this->engine->get_engine_state() and ending) {
             auto player = engine->get_current_player();
             this->engine->end_engine_state();
-            auto dialog = new nanogui::MessageDialog(
-              this->parent(),
-              nanogui::MessageDialog::Type::Information,
-              "Winner!",
-              player->name + " is the winner!");
-            dialog->set_callback([&, this]([[maybe_unused]] int result) {
-                this->end_dialog = true;
-            });
+            info_message_dialog(
+              this->parent(), player->name + " is the winner!", "Winner!");
         }
-
-        if (this->engine->is_full(layout)) {
-            this->engine->end_engine_state();
-            auto dialog = new nanogui::MessageDialog(
-              this->parent(),
-              nanogui::MessageDialog::Type::Information,
-              " ",
-              "The game is a draw!");
-            dialog->set_callback([&, this]([[maybe_unused]] int result) {
-                this->end_dialog = true;
-            });
-        }
+    }
+    if (this->engine->is_full(layout)) {
+        this->engine->end_engine_state();
+        info_message_dialog(this->parent(), "The game is a draw!", "Oh!");
     }
 }
 
@@ -259,8 +245,7 @@ Board::draw(NVGcontext* ctx)
 
     draw_coins(ctx);
 
-    if (!end_dialog)
-        draw_end_state(draw_player_state());
+    draw_state(draw_player_state());
 }
 
 } // namespace conect

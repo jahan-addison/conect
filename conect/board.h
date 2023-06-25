@@ -28,23 +28,24 @@ class Board : public nanogui::Canvas
     resource::image load_resource(NVGcontext* ctx, resource::type type);
 
   public:
-    resource::layout i_layout{};
-    resource::image board{ -1 };
     inline std::pair<float, float> get_coin_drawing_pos(
       float x_pos,
       float y_pos) const noexcept;
     void clear_board(NVGcontext* ctx);
     void print_board() const;
     bool draw_player_state();
-    void draw_end_state(bool ending);
+    void draw_state(bool ending);
 
     bool add_coin(NVGcontext* ctx, board::column column, board::color color);
 
     void draw_coins(NVGcontext* ctx) const;
 
-  public:
+    constexpr board::layout* get_board_layout() { return &layout; }
+
+  private:
+    resource::layout i_layout{};
+    resource::image board{ -1 };
     board::layout layout{};
-    bool end_dialog{ false };
     std::shared_ptr<Engine> engine;
 };
 

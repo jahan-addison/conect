@@ -40,10 +40,10 @@ class Stratzilla_Algorithm final : public IAlgorithm
     inline int get_next_move_as_advanced_ai() const override;
     bool get_next_move_is_winning(board::color) const override;
 
-    //  private:
+  private:
     score tabulate_score(board::color c) const override;
 
-    //  private:
+  private:
     move minimax_alpha_beta_pruning(board::layout* board,
                                     int depth,
                                     int alpha,
@@ -54,7 +54,7 @@ class Stratzilla_Algorithm final : public IAlgorithm
     score get_score_of_set(std::vector<board::color> const& set,
                            board::color color) const;
 
-    //  private:
+  private:
     std::shared_ptr<Engine> engine_;
     board::layout* board_;
 };

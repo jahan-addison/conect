@@ -41,6 +41,7 @@ info_message_dialog(nanogui::Widget* parent,
     if (!info_dialog_open) {
         auto* scr = parent->screen();
         scr->inc_ref();
+
         info_dialog_open = true;
 
         nanogui::ref<MessageDialog> dialog =

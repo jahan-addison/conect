@@ -31,6 +31,9 @@ class IAlgorithm
 
   private:
     virtual int tabulate_score(board::color color) const = 0;
+
+  public:
+    virtual ~IAlgorithm() = default;
 };
 
 } // namespace ai

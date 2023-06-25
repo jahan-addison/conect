@@ -33,7 +33,7 @@ class Engine
     struct Player
     {
         Player() = delete;
-        explicit Player(std::string name_, board::color color_, bool ai_)
+        explicit Player(std::string const name_, board::color color_, bool ai_)
           : name(std::move(name_))
           , color(color_)
           , ai(ai_)
