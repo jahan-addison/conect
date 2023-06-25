@@ -47,7 +47,8 @@ info_message_dialog(nanogui::Widget* parent,
         nanogui::ref<MessageDialog> dialog =
           new MessageDialog(scr, MessageDialog::Type::Information, title, msg);
 
-        dialog->set_callback([&, scr](int result) { scr->redraw(); });
+        dialog->set_callback(
+          [&, scr]([[maybe_unused]] int result) { scr->redraw(); });
 
         info_dialog_open = false;
     }
