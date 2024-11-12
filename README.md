@@ -2,7 +2,7 @@
 
 > Connect-four 🎲
 
-![img](./resources/orianna-mac.png)
+![img](./resources/conect-mac.png)
 
 ## Features
 
@@ -41,7 +41,7 @@ Example:
 ``` bash
 > mkdir build && cd build
 > cmake .. -DCMAKE_BUILD_TYPE=[Debug | Coverage | Release]
-> make
+> make # Or ninja on windows
 > ./main
 > make test      # Makes and runs the tests.
 ```
