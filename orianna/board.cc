@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #include <ai/stratzilla.h>
@@ -16,13 +16,13 @@
 #include <ranges>
 #include <thread>
 
-namespace conect {
+namespace orianna {
 
 namespace fs = std::filesystem;
 
-inline fs::path
-get_resource(std::string_view file,
-             std::string_view file_root = board::root_resource_directory)
+inline fs::path get_resource(
+  std::string_view file,
+  std::string_view file_root = board::root_resource_directory)
 {
     if (fs::exists(fs::path(file_root.data()) / file.data()))
         return fs::path(file_root.data()) / file.data();
@@ -30,8 +30,7 @@ get_resource(std::string_view file,
         return fs::path("");
 }
 
-resource::image
-Board::load_resource(NVGcontext* ctx, resource::type type)
+resource::image Board::load_resource(NVGcontext* ctx, resource::type type)
 {
     switch (type) {
         case resource::type::board: {
@@ -54,8 +53,9 @@ Board::load_resource(NVGcontext* ctx, resource::type type)
     return 0;
 }
 
-inline std::pair<float, float>
-Board::get_coin_drawing_pos(float x_pos, float y_pos) const noexcept
+inline std::pair<float, float> Board::get_coin_drawing_pos(
+  float x_pos,
+  float y_pos) const noexcept
 {
     float xx = m_pos.x() + 55.f + (106.2211f * x_pos);
     float yy = m_pos.y() + m_size.y() - 107.2222f - (75.6222f * y_pos);
@@ -63,8 +63,7 @@ Board::get_coin_drawing_pos(float x_pos, float y_pos) const noexcept
     return { xx, yy };
 }
 
-void
-Board::clear_board(NVGcontext* ctx)
+void Board::clear_board(NVGcontext* ctx)
 {
     for (auto& row : layout)
         std::fill_n(row.begin(), row.size(), board::color::none);
@@ -79,8 +78,7 @@ Board::clear_board(NVGcontext* ctx)
     }
 }
 
-void
-Board::print_board() const
+void Board::print_board() const
 {
     unsigned int count = 0;
     for (unsigned int i = 0; i < board::size::col; i++) {
@@ -114,8 +112,7 @@ Board::print_board() const
     std::cout << std::endl;
 }
 
-bool
-Board::add_coin(NVGcontext* ctx, board::column column, board::color color)
+bool Board::add_coin(NVGcontext* ctx, board::column column, board::color color)
 {
     for (unsigned int r = 0; r < board::size::row; r++) {
         if (layout[r][column] == board::color::none) {
@@ -142,8 +139,7 @@ Board::add_coin(NVGcontext* ctx, board::column column, board::color color)
     return false;
 }
 
-void
-Board::draw_coins(NVGcontext* ctx) const
+void Board::draw_coins(NVGcontext* ctx) const
 {
     auto x_pos = 0, y_pos = 0;
     for (auto const& column : i_layout) {
@@ -173,8 +169,7 @@ Board::draw_coins(NVGcontext* ctx) const
     }
 }
 
-void
-Board::draw_state(bool ending)
+void Board::draw_state(bool ending)
 {
     if (!this->engine->get_engine_state()) {
         if (!this->engine->get_engine_state() and ending) {
@@ -190,8 +185,7 @@ Board::draw_state(bool ending)
     }
 }
 
-bool
-Board::draw_player_state()
+bool Board::draw_player_state()
 {
     auto player = engine->get_current_player();
     auto ai = engine->ai_factory<ai::ST>(engine, &this->layout);
@@ -205,8 +199,8 @@ Board::draw_player_state()
             this->add_coin(
               this->screen()->nvg_context(), next_move, player->color);
             // delay event loop to give feel of "thinking"
-            nanogui::async(
-              [] { std::this_thread::sleep_for(std::chrono::seconds(1)); });
+            // nanogui::async(
+            //   [] { std::this_thread::sleep_for(std::chrono::seconds(1)); });
         }
         // did the ai win just now?
         if (!ai.get_next_move_is_winning(player->color)) {
@@ -220,8 +214,7 @@ Board::draw_player_state()
     return ai.get_next_move_is_winning(player->color);
 }
 
-void
-Board::draw(NVGcontext* ctx)
+void Board::draw(NVGcontext* ctx)
 {
     nanogui::Screen* scr = screen();
     if (scr == nullptr)
@@ -248,4 +241,4 @@ Board::draw(NVGcontext* ctx)
     draw_state(draw_player_state());
 }
 
-} // namespace conect
+} // namespace orianna

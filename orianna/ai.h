@@ -1,12 +1,12 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #pragma once
 
 #include <common.h>
 
-namespace conect {
+namespace orianna {
 
 class Engine;
 
@@ -37,4 +37,4 @@ class IAlgorithm
 };
 
 } // namespace ai
-} // namespace conect
+} // namespace orianna

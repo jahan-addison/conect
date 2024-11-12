@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #pragma once
@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string>
 
-namespace conect {
+namespace orianna {
 
 namespace {
 // Ensures only one message dialog is open in the event loop
@@ -18,8 +18,7 @@ bool error_dialog_open = false;
 bool info_dialog_open = false;
 }
 
-void
-error_exit_program_dialog(nanogui::Widget* parent, std::string const& msg)
+void error_exit_program_dialog(nanogui::Widget* parent, std::string const& msg)
 {
     using nanogui::MessageDialog;
     if (!error_dialog_open) {
@@ -32,10 +31,9 @@ error_exit_program_dialog(nanogui::Widget* parent, std::string const& msg)
     }
 }
 
-void
-info_message_dialog(nanogui::Widget* parent,
-                    std::string const& msg,
-                    std::string const& title = " ")
+void info_message_dialog(nanogui::Widget* parent,
+                         std::string const& msg,
+                         std::string const& title = " ")
 {
     using nanogui::MessageDialog;
     if (!info_dialog_open) {
@@ -54,4 +52,4 @@ info_message_dialog(nanogui::Widget* parent,
     }
 }
 
-} // namespace conect
+} // namespace orianna

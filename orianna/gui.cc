@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #include <ai/stratzilla.h>
@@ -11,12 +11,20 @@
 #include <string>
 #include <utility>
 
-namespace conect {
+namespace orianna {
 
 using namespace nanogui;
 
 GUI::GUI()
-  : Screen(Vector2i(1150, 800), "conect", false, false, true, true, false, 4, 1)
+  : Screen(Vector2i(1150, 800),
+           "orianna",
+           false,
+           false,
+           true,
+           true,
+           false,
+           4,
+           1)
   , engine(std::make_shared<Engine>())
 
 {
@@ -27,8 +35,7 @@ GUI::GUI()
     this->set_visible(true);
 }
 
-void
-GUI::set_board_actions()
+void GUI::set_board_actions()
 {
     this->inc_ref();
     FormHelper* gui = new FormHelper(this);
@@ -46,8 +53,7 @@ GUI::set_board_actions()
     }
 }
 
-void
-GUI::board_event(board::column column)
+void GUI::board_event(board::column column)
 {
     auto player = engine->get_current_player();
     auto ai =
@@ -71,8 +77,7 @@ GUI::board_event(board::column column)
 #endif
 }
 
-void
-GUI::set_sidebar()
+void GUI::set_sidebar()
 {
     this->inc_ref();
     FormHelper* gui = new FormHelper(this);
@@ -114,8 +119,7 @@ GUI::set_sidebar()
       ->set_items({ "Beginner", "Hard" });
 }
 
-void
-GUI::set_board()
+void GUI::set_board()
 {
     this->inc_ref();
     ref<Window> window = new Window(this, " ");
@@ -126,4 +130,4 @@ GUI::set_board()
     canvas->set_background_color({ 100, 100, 100, 255 });
     canvas->set_fixed_size({ 820, 520 });
 }
-} // namespace conect
+} // namespace orianna

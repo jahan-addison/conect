@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #pragma once
@@ -12,15 +12,14 @@
 #include <ostream>
 #include <string_view>
 
-namespace conect {
+namespace orianna {
 
 namespace board {
 
 constexpr std::string_view root_resource_directory = "./resources/";
 
 template<typename T>
-std::ostream&
-operator<<(
+std::ostream& operator<<(
   typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream,
   const T& e)
 {
@@ -64,4 +63,4 @@ using layout =
 
 } // namespace resource
 
-} // namespace conect
+} // namespace orianna

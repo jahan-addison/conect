@@ -1,8 +1,8 @@
-# conect
+# orianna
 
 > Connect-four 🎲
 
-![img](./resources/conect-mac.png)
+![img](./resources/orianna-mac.png)
 
 ## Features
 

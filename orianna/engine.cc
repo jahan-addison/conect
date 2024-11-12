@@ -1,13 +1,12 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #include <engine.h>
 
-namespace conect {
+namespace orianna {
 
-void
-Engine::set_next_player()
+void Engine::set_next_player()
 {
     if (*player == player_1)
         player = &player_2;
@@ -15,8 +14,7 @@ Engine::set_next_player()
         player = &player_1;
 }
 
-Engine::Player*
-Engine::get_player(players p)
+Engine::Player* Engine::get_player(players p)
 {
     switch (p) {
         case Engine::players::first:
@@ -28,8 +26,7 @@ Engine::get_player(players p)
     }
 }
 
-bool
-Engine::is_full(board::layout layout) const
+bool Engine::is_full(board::layout layout) const
 {
     bool full = true;
     for (auto const& k : layout) {
@@ -40,4 +37,4 @@ Engine::is_full(board::layout layout) const
     return full;
 }
 
-} // namespace conect
+} // namespace orianna

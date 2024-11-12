@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 #include <windows.h>
 #endif
 
-namespace conect {
+namespace orianna {
 
 class Engine;
 class Board;
@@ -38,4 +38,4 @@ class GUI : public nanogui::Screen
     void set_board();
 };
 
-} // namespace conect
+} // namespace orianna

@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #pragma once
@@ -12,7 +12,7 @@
 #include <string_view>
 #include <utility>
 
-namespace conect {
+namespace orianna {
 
 class Engine
 {
@@ -97,4 +97,4 @@ class Engine
     bool ended_{ false };
 };
 
-} // namespace conect
+} // namespace orianna

@@ -1,17 +1,16 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #include <gui.h>
 #include <nanogui/nanogui.h>
 
-int
-main()
+int main()
 {
     try {
         nanogui::init();
         {
-            nanogui::ref<conect::GUI> app = new conect::GUI();
+            nanogui::ref<orianna::GUI> app = new orianna::GUI();
             app->dec_ref();
             app->draw_all();
             app->set_visible(true);

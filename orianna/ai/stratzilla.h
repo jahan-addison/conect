@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-namespace conect {
+namespace orianna {
 
 class Engine;
 
@@ -61,4 +61,4 @@ class Stratzilla_Algorithm final : public IAlgorithm
 
 } // namespace ai
 
-} // namespace conect
+} // namespace orianna

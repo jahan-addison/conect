@@ -1,10 +1,10 @@
-# conect is free software under GPL v3 -- see LICENSE for details.
+# orianna is free software under GPL v3 -- see LICENSE for details.
 
 cmake_minimum_required(VERSION 3.14)
 # cmake_policy(SET CMP0127 OLD)
 
 # See config.h.in for some more details.
-project(conect VERSION 1.0.2.0 LANGUAGES CXX)
+project(orianna VERSION 1.0.3.0 LANGUAGES CXX)
 
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
@@ -19,13 +19,13 @@ include(Misc)
 include(Warnings)
 
 set(SOURCES          # All .cc files in project
-    conect/gui.cc
-    conect/engine.cc
-    conect/board.cc
-    conect/ai/stratzilla.cc
+    orianna/gui.cc
+    orianna/engine.cc
+    orianna/board.cc
+    orianna/ai/stratzilla.cc
 )
 
-set(LIBRARY_NAME conect)
+set(LIBRARY_NAME orianna)
 
 add_library(${LIBRARY_NAME} OBJECT ${SOURCES})
 
@@ -37,7 +37,7 @@ target_link_options(${LIBRARY_NAME} PUBLIC ${SUBSYSTEM_LINKER_OPTIONS})
 
 
 # Lib needs its header files, and users of the library must also see these (PUBLIC).
-target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/conect)
+target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/orianna)
 
 # NANOGUI
 set(NANOGUI_BUILD_PYTHON OFF)
@@ -59,7 +59,7 @@ target_set_warnings(${LIBRARY_NAME} ENABLE ALL DISABLE Annoying)
 
 # Add executable
 # If you add more executables, copy these lines accordingly.
-add_executable(main conect/conect.cc)   # Name of exec. and location of file.
+add_executable(main orianna/orianna.cc)   # Name of exec. and location of file.
 target_link_libraries(main PRIVATE ${LIBRARY_NAME})  # Link the executable to library (if it uses it).
 
 target_set_warnings(main ENABLE ALL DISABLE Annoying) # Set warnings (if needed).

@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 #endif
 #include <stb_image.h>
 
-namespace conect {
+namespace orianna {
 
 class GLTexture
 {
@@ -122,4 +122,4 @@ class GLTexture
     std::string mTextureName;
     GLuint mTextureId;
 };
-} // namespace conect
+} // namespace orianna

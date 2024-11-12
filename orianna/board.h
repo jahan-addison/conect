@@ -1,5 +1,5 @@
 /*
- *   conect is free software under GPL v3 -- see LICENSE for details.
+ *   orianna is free software under GPL v3 -- see LICENSE for details.
  */
 
 #pragma once
@@ -12,7 +12,7 @@
 #include <string_view>
 #include <utility>
 
-namespace conect {
+namespace orianna {
 
 class Board : public nanogui::Canvas
 {
@@ -49,4 +49,4 @@ class Board : public nanogui::Canvas
     std::shared_ptr<Engine> engine;
 };
 
-} // namespace conect
+} // namespace orianna

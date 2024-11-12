@@ -8,7 +8,7 @@
 #include <engine.h>
 #include <vector>
 
-namespace conect {
+namespace orianna {
 
 namespace ai {
 
@@ -18,8 +18,7 @@ using std::min;
 constexpr int NUM_ROW = board::size::row;
 constexpr int NUM_COL = board::size::col;
 
-void
-board_move(board::layout* board, int column, board::color color)
+void board_move(board::layout* board, int column, board::color color)
 {
     for (int r = 0; r < NUM_ROW; r++) {
         if ((*board)[r][column] == board::color::none) { // first available spot
@@ -29,8 +28,7 @@ board_move(board::layout* board, int column, board::color color)
     }
 }
 
-int
-ST::get_next_move(difficulty d) const
+int ST::get_next_move(difficulty d) const
 {
     switch (d) {
         case difficulty::beginner:
@@ -44,26 +42,23 @@ ST::get_next_move(difficulty d) const
     }
 }
 
-inline int
-ST::get_next_move_as_beginner_ai() const
+inline int ST::get_next_move_as_beginner_ai() const
 {
     return minimax_alpha_beta_pruning(
       board_, 5, 0 - INT_MAX, INT_MAX, board::color::blue)[1];
 }
 
-inline int
-ST::get_next_move_as_advanced_ai() const
+inline int ST::get_next_move_as_advanced_ai() const
 {
     return minimax_alpha_beta_pruning(
       board_, 12, 0 - INT_MAX, INT_MAX, board::color::blue)[1];
 }
 
-ST::move
-ST::minimax_alpha_beta_pruning(board::layout* board,
-                               int depth,
-                               int alpha,
-                               int beta,
-                               board::color color) const
+ST::move ST::minimax_alpha_beta_pruning(board::layout* board,
+                                        int depth,
+                                        int alpha,
+                                        int beta,
+                                        board::color color) const
 {
     auto b = board;
     auto turns = engine_->get_turn_count();
@@ -138,9 +133,8 @@ ST::minimax_alpha_beta_pruning(board::layout* board,
     }
 }
 
-ST::score
-ST::get_score_of_set(std::vector<board::color> const& set,
-                     board::color color) const
+ST::score ST::get_score_of_set(std::vector<board::color> const& set,
+                               board::color color) const
 {
     points good = 0;  // points in favor of player
     points bad = 0;   // points against player
@@ -156,8 +150,7 @@ ST::get_score_of_set(std::vector<board::color> const& set,
     return heuristic_function(good, bad, empty);
 }
 
-bool
-ST::get_next_move_is_winning(board::color color) const
+bool ST::get_next_move_is_winning(board::color color) const
 {
     auto b = board_;
     unsigned int win_sequence = 0; // to count adjacent pieces
@@ -219,8 +212,7 @@ ST::get_next_move_is_winning(board::color color) const
     return false; // otherwise no winning move
 }
 
-ST::score
-ST::tabulate_score(board::color color) const
+ST::score ST::tabulate_score(board::color color) const
 {
     score score{ 0 };
     auto b = board_;
@@ -287,8 +279,7 @@ ST::tabulate_score(board::color color) const
     return score;
 }
 
-ST::score
-ST::heuristic_function(points g, points b, points z) const
+ST::score ST::heuristic_function(points g, points b, points z) const
 {
     score score = 0;
     if (g == 4) {
@@ -311,4 +302,4 @@ ST::heuristic_function(points g, points b, points z) const
 }
 
 } // namespace ai
-} // namespace conect
+} // namespace orianna
