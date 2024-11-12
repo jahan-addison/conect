@@ -4,11 +4,6 @@
 
 ![img](./resources/conect-mac.png)
 
-## Features
-
-...
-
-
 ## Development
 
 Requirements: gcc/g++10, python3.4, and cmake 3.14.
